@@ -7,5 +7,15 @@ public class DragCardMotionStrategy : ICardMotionStrategy
 	public void UpdateCardPosition(Card card)
 	{
 		card.transform.position = Input.mousePosition;
+
+		Vector3 FloatingTarget = 
+			(Vector3)card.FloatingDirection 
+			* card.FloatingDegree
+			+ card.transform.position;
+
+		card.FloatingCard.transform.position = Vector3.Lerp(
+			card.FloatingCard.transform.position, 
+			FloatingTarget, 
+			Time.deltaTime * 10);
 	}
 }

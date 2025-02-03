@@ -6,7 +6,7 @@ public class Slot : Zone
 {
 	override protected void ArrangeCards()
 	{
-		if (Cards.Count == 0)
+		if (Cards.Length == 0)
 			return;
 
 		Cards[0].TargetPosition = this.transform.position;
@@ -14,7 +14,7 @@ public class Slot : Zone
 
 	public override bool AddCard(Card card)
 	{
-		if (Cards.Count > 0)
+		if (Cards.Length > 0)
 		{
 			GameObject.Destroy(Cards[0].gameObject);
 		}

@@ -7,40 +7,19 @@ public class Zone : MonoBehaviour
 {
 	public string ZoneName;
 
-	private bool m_hover;
-	public bool IsHovered
+	private List<Card> m_cards = new List<Card>();
+	public Card[] Cards
 	{
 		get
 		{
-			return m_hover;
-		}
-		set
-		{
-			m_hover = value;
-			if (m_hover)
-			{
-				Debug.Log("+hover over " + ZoneName);
-			}
-			else
-			{
-				Debug.Log("-hover over " + ZoneName);
-			}
-		}
-	}
+			int count = m_cards.Count;
+			Card[] result = new Card[count];
 
-	public List<Card> Cards
-	{
-		get
-		{
-			List<Card> result = new List<Card>();
-			foreach (Transform child in transform)
+			for (int i = 0; i < count; i++)
 			{
-				Card card = child.GetComponent<Card>();
-				if (card != null)
-				{
-					result.Add(card);
-				}
+				result[i] = m_cards[i];
 			}
+
 			return result;
 		}
 	}
@@ -73,8 +52,16 @@ public class Zone : MonoBehaviour
 
 	virtual public bool AddCard(Card card)
 	{
-		card.transform.SetParent(transform);
+		Debug.Assert(!m_cards.Contains(card));
+		m_cards.Add(card);
+		card.CurrentZone = this;
 		return true;
+	}
+
+	virtual public void RemoveCard(Card card)
+	{
+		if (m_cards.Contains(card))
+			m_cards.Remove(card);
 	}
 
 	public void ListSubzones()

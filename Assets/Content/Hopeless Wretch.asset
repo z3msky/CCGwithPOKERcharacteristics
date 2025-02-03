@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hopeless Wretch
   m_EditorClassIdentifier: 
   CardName: Hopeless Wretch
+  ShortName: Wretch
   CardArt: {fileID: 21300000, guid: 873a87ee36072ab4cbbeb3a72f669143, type: 3}
   CardTypes: 00000000
   Rank: 3

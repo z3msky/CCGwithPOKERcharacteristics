@@ -6,6 +6,6 @@ public class DefaultCardMotionStrategy : ICardMotionStrategy
 {
 	public void UpdateCardPosition(Card card)
 	{
-		card.LerpTowardTarget();
+		card.LerpToward(card.TargetPosition);
 	}
 }

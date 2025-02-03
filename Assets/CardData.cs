@@ -9,6 +9,7 @@ public class CardData : ScriptableObject
 {
 	[Header("General")]
 	public string CardName;
+	public string ShortName;
 	public Sprite CardArt;
 	public CardType[] CardTypes;
 

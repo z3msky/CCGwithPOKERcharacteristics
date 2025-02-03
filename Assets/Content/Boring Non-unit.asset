@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8e6ee573e386e42b4070aa90fe869c, type: 3}
   m_Name: Boring Non-unit
   m_EditorClassIdentifier: 
-  CardName: Boring
+  CardName: Boring Non-unit
+  ShortName: Non-unit
   CardArt: {fileID: 0}
   CardTypes: 
   Rank: 8
   Suit: 3
-  Power: 0
-  Toughness: 1
+  Power: 2
+  Toughness: 3
