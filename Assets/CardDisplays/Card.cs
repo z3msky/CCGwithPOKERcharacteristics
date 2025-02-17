@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 public class Card : MonoBehaviour
 {
@@ -22,15 +23,18 @@ public class Card : MonoBehaviour
     public Sprite HeartSprite;
     public Sprite ClubSprite;
     public Sprite DiamondSprite;
+    public Sprite CardBGSprite;
+    public Sprite CardBackSprite;
+    public float RandomOffsetAmount;
 
     [Header("Card Design References")]
     public Image FloatingCard;
     public Image RankImage;
     public Image SuitImage;
     public Image CardArtImage;
+    public Image CardBGImage;
     public TextMeshProUGUI PowerToughnessText;
     public TextMeshProUGUI CardNameText;
-    public TextMeshProUGUI CardNameTooltipText;
 
     private Zone m_currZone;
 	public Zone CurrentZone {
@@ -63,9 +67,30 @@ public class Card : MonoBehaviour
 		}
     }
 
+    private bool m_revealed;
+    public bool Revealed
+    {
+        get
+        {
+            return m_revealed;
+        }
+
+        set
+        {
+            m_revealed = value;
+            UpdateCardDisplay();
+        }
+    }
+
+    public bool CanBePlayed()
+    {
+        return true;
+    }
+
 	private ICardMotionStrategy m_currPosStrat;
 	private ICardMotionStrategy m_defaultPosStrat;
 	private ICardMotionStrategy m_dragPosStrat;
+
 
 	// Start is called before the first frame update
 	void Start()
@@ -106,15 +131,31 @@ public class Card : MonoBehaviour
         }
 
         UpdateCardDisplay();
+        UpdateCardRotation();
     }
 
     void UpdateCardDisplay()
 	{
+        if (!Revealed)
+        {
+            CardBGImage.sprite = CardBackSprite;
+
+			CardArtImage.enabled = false;
+			RankImage.enabled = false;
+			SuitImage.enabled = false;
+			CardNameText.enabled = false;
+		    PowerToughnessText.enabled = false;
+
+            return;
+		}
+
+        CardBGImage.sprite = CardBGSprite;
+
 		CardArtImage.enabled = true;
-		RankImage.enabled = false;
-		SuitImage.enabled = false;
-		PowerToughnessText.enabled = false;
-		CardNameText.enabled = false;
+		RankImage.enabled = true;
+		SuitImage.enabled = true;
+		CardNameText.enabled = true;
+		PowerToughnessText.enabled = true;
 
 		foreach (CardTypeComponent typeComponent in GetComponents<CardTypeComponent>())
 		{
@@ -141,9 +182,12 @@ public class Card : MonoBehaviour
 
         PowerToughnessText.text = CardDataAsset.Power + "/" + CardDataAsset.Toughness;
         CardNameText.text = CardDataAsset.ShortName;
-        CardNameTooltipText.text = CardDataAsset.CardName;
         gameObject.name = CardDataAsset.CardName;
 	}
+
+    public void UpdateCardRotation()
+    {
+    }
 
     public void LerpToward(Vector2 target)
     {
@@ -154,10 +198,8 @@ public class Card : MonoBehaviour
 	public void Drag()
 	{
         m_currPosStrat = m_dragPosStrat;
-
+        transform.SetAsLastSibling();
 		Zone hoveredZone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
-
-        
 	}
 
 	public void Drop()

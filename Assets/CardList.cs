@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "New Card List", menuName = "Create New Card list", order = 0)]
+[CreateAssetMenu(fileName = "New Card List", menuName = "Create New Card list", order = 1)]
 public class CardList : ScriptableObject
 {
 	[SerializeReference]

@@ -12,6 +12,7 @@ public class CardData : ScriptableObject
 	public string ShortName;
 	public Sprite CardArt;
 	public CardType[] CardTypes;
+	public string RulesText;
 
 	[Range(0, 13)]
 	public int Rank;

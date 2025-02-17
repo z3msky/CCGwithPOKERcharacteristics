@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: Boring Non-unit
   ShortName: Non-unit
-  CardArt: {fileID: 0}
+  CardArt: {fileID: 1623453918, guid: 2c9b499e5786c664eb4871a87a1b1f11, type: 3}
   CardTypes: 
   Rank: 8
   Suit: 3

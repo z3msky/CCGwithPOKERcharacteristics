@@ -32,6 +32,7 @@ public class ZoneManager : MonoBehaviour
 					debugtext.text = r.gameObject.GetComponent<Zone>().ZoneName;
 				}
 
+				ZoneBorder border = r.gameObject.GetComponentInChildren<ZoneBorder>();
 				return r.gameObject.GetComponent<Zone>();
 			}
 		}

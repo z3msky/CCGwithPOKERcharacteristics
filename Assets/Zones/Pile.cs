@@ -9,12 +9,13 @@ public class Pile : Zone
 
     override protected void ArrangeCards()
     {
-        Vector3 currPos = transform.position + FirstCardOffset;
+
+        Vector3 currPos = transform.position + (FirstCardOffset * CardCanvas.scaleFactor);
 
         foreach (Card card in Cards)
         {
             card.TargetPosition = currPos;
-            currPos += Spread;
+            currPos += Spread * CardCanvas.scaleFactor;
         }
     }
 }

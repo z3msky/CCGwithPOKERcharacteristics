@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: DefaultDeck
   m_EditorClassIdentifier: 
   Cards:
-  - {fileID: 11400000, guid: a6be25db17bd8404290c93eb21b1798a, type: 2}
-  - {fileID: 11400000, guid: a6be25db17bd8404290c93eb21b1798a, type: 2}
+  - {fileID: 11400000, guid: 3f154986dc644d9429fb09a660951be1, type: 2}
+  - {fileID: 11400000, guid: 8ef38ec8de328c64e8ff41273a31d6e8, type: 2}
+  - {fileID: 11400000, guid: 3f154986dc644d9429fb09a660951be1, type: 2}
+  - {fileID: 11400000, guid: 3f154986dc644d9429fb09a660951be1, type: 2}
+  - {fileID: 11400000, guid: 8ef38ec8de328c64e8ff41273a31d6e8, type: 2}
+  - {fileID: 11400000, guid: 8ef38ec8de328c64e8ff41273a31d6e8, type: 2}
+  - {fileID: 11400000, guid: 3f154986dc644d9429fb09a660951be1, type: 2}
+  - {fileID: 11400000, guid: 8ef38ec8de328c64e8ff41273a31d6e8, type: 2}

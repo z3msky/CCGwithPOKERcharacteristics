@@ -16,7 +16,9 @@ public class Slot : Zone
 	{
 		if (Cards.Length > 0)
 		{
-			GameObject.Destroy(Cards[0].gameObject);
+			Card oldCard = Cards[0];
+			RemoveCard(oldCard);
+			Destroy(oldCard.gameObject);
 		}
 
 		return base.AddCard(card);

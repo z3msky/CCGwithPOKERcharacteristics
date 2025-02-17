@@ -6,6 +6,7 @@ using UnityEngine;
 public class Zone : MonoBehaviour
 {
 	public string ZoneName;
+	public bool CardsEnterHidden = false;
 
 	private List<Card> m_cards = new List<Card>();
 	public Card[] Cards
@@ -41,7 +42,19 @@ public class Zone : MonoBehaviour
         } 
     }
 
-	void Update()
+	protected Canvas CardCanvas;
+
+	private void Start()
+	{
+		Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+		foreach(Canvas c in canvases)
+		{
+			if (c.name == "CardCanvas")
+				CardCanvas = c;
+		}
+		Debug.Assert(CardCanvas != null);
+	}
+	private void Update()
 	{
 		ArrangeCards();
 	}
@@ -53,6 +66,16 @@ public class Zone : MonoBehaviour
 	virtual public bool AddCard(Card card)
 	{
 		Debug.Assert(!m_cards.Contains(card));
+
+		if (CardsEnterHidden)
+		{
+			card.Revealed = false;
+		}
+		else
+		{
+			card.Revealed = true;
+		}
+
 		m_cards.Add(card);
 		card.CurrentZone = this;
 		return true;
