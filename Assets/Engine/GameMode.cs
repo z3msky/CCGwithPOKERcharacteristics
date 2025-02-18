@@ -13,6 +13,5 @@ public class GameMode : MonoBehaviour
 
 	virtual public void WhileQueueEmpty()
 	{
-
 	}
 }

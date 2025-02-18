@@ -8,7 +8,7 @@ public enum Suit
 	CLUBS,
 	HEARTS,
 	SPADES,
-	JOKER
+	JOKER,
 }
 
 public class SuitUtil

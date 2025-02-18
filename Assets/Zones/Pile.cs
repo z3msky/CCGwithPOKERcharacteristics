@@ -18,4 +18,13 @@ public class Pile : Zone
             currPos += Spread * CardCanvas.scaleFactor;
         }
     }
+
+    public Card NthCardFromTop(int n = 0)
+    {
+        Debug.Assert(n < Cards.Length);
+        Debug.Assert(n >= 0);
+        int i = Cards.Length - 1 - n;
+
+        return Cards[i];
+    }
 }

@@ -14,11 +14,11 @@ public class DraftGameMode : GameMode
 
 	override public void GameSetup()
 	{
+		m_dealer = GetComponent<Dealer>();
+
 		Debug.Assert(EnemyPile != null);
 		Debug.Assert(PlayerPile != null);
 		Debug.Assert(DraftSlot != null);
-
-		m_dealer = GetComponent<Dealer>();
 		Debug.Assert(m_dealer != null);
 
 		m_dealer.GenerateDeck(DebugDeck, EnemyPack);
@@ -27,5 +27,6 @@ public class DraftGameMode : GameMode
 	override public void WhileQueueEmpty()
 	{
 		Debug.Assert(m_dealer != null);
+		Debug.Log("Queue Empty");
 	}
 }

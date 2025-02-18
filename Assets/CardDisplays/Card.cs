@@ -16,6 +16,7 @@ public class Card : MonoBehaviour
     public float LerpRatio;
     public Vector2 FloatingDirection;
     public float FloatingDegree;
+    public bool Draggable;
 
 	[Header("Card Design Elements")]
     public Sprite[] RankSprites;
@@ -23,6 +24,8 @@ public class Card : MonoBehaviour
     public Sprite HeartSprite;
     public Sprite ClubSprite;
     public Sprite DiamondSprite;
+    public Sprite PairSprite;
+    public Sprite ThreeofSprite;
     public Sprite CardBGSprite;
     public Sprite CardBackSprite;
     public float RandomOffsetAmount;
@@ -35,6 +38,7 @@ public class Card : MonoBehaviour
     public Image CardBGImage;
     public TextMeshProUGUI PowerToughnessText;
     public TextMeshProUGUI CardNameText;
+    public TextMeshProUGUI RulesText;
 
     private Zone m_currZone;
 	public Zone CurrentZone {
@@ -63,6 +67,7 @@ public class Card : MonoBehaviour
         set
         {
             m_cardData = value;
+            gameObject.name = m_cardData.CardName;
 			SetupCardTypeComponents();
 		}
     }
@@ -104,6 +109,8 @@ public class Card : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Assert(CurrentZone != null);
+
         m_currPosStrat.UpdateCardPosition(this);
 
         if (DragToSetCardData != null )
@@ -145,8 +152,9 @@ public class Card : MonoBehaviour
 			SuitImage.enabled = false;
 			CardNameText.enabled = false;
 		    PowerToughnessText.enabled = false;
+            RulesText.enabled = false;
 
-            return;
+			return;
 		}
 
         CardBGImage.sprite = CardBGSprite;
@@ -155,7 +163,8 @@ public class Card : MonoBehaviour
 		RankImage.enabled = true;
 		SuitImage.enabled = true;
 		CardNameText.enabled = true;
-		PowerToughnessText.enabled = true;
+		PowerToughnessText.enabled = false;
+        RulesText.enabled = true;
 
 		foreach (CardTypeComponent typeComponent in GetComponents<CardTypeComponent>())
 		{
@@ -181,8 +190,10 @@ public class Card : MonoBehaviour
 		}
 
         PowerToughnessText.text = CardDataAsset.Power + "/" + CardDataAsset.Toughness;
-        CardNameText.text = CardDataAsset.ShortName;
-        gameObject.name = CardDataAsset.CardName;
+		//CardNameText.text = CardDataAsset.CardName.ToUpper();
+		CardNameText.text = CardDataAsset.ShortName.ToUpper();
+        RulesText.text = CardDataAsset.RulesText;
+		gameObject.name = CardDataAsset.CardName;
 	}
 
     public void UpdateCardRotation()
@@ -197,20 +208,29 @@ public class Card : MonoBehaviour
 
 	public void Drag()
 	{
-        m_currPosStrat = m_dragPosStrat;
-        transform.SetAsLastSibling();
-		Zone hoveredZone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
+        if (Draggable)
+        {
+			GetComponent<Image>().enabled = true;
+			transform.SetAsLastSibling();
+			Zone hoveredZone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
+			m_currPosStrat = m_dragPosStrat;
+        }
 	}
 
 	public void Drop()
 	{
-        TargetPosition = transform.position;
-		m_currPosStrat = m_defaultPosStrat;
 
-        Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
+        if (Draggable)
+        {
+            TargetPosition = transform.position;
+            m_currPosStrat = m_defaultPosStrat;
 
-		FindAnyObjectByType<Dealer>().MoveCardToZone(this, zone);
+            Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
 
-        FloatingCard.transform.position = transform.position;
+            FindAnyObjectByType<Dealer>().MoveCardToZone(this, zone);
+
+            FloatingCard.transform.position = transform.position;
+            GetComponent<Image>().enabled = false;
+        }
 	}
 }

@@ -7,7 +7,7 @@ public class UnitTypeComponent : CardTypeComponent
     void Start()
     {
         CardTypeOfComponent = CardType.UNIT;
-        AnnounceAttachToCard();
+        //AnnounceAttachToCard();
 	}
 
     void Update()

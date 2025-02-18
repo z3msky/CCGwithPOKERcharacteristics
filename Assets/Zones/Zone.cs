@@ -7,6 +7,7 @@ public class Zone : MonoBehaviour
 {
 	public string ZoneName;
 	public bool CardsEnterHidden = false;
+	public bool CardsEnterDraggable = false;
 
 	private List<Card> m_cards = new List<Card>();
 	public Card[] Cards
@@ -52,20 +53,20 @@ public class Zone : MonoBehaviour
 			if (c.name == "CardCanvas")
 				CardCanvas = c;
 		}
+
 		Debug.Assert(CardCanvas != null);
+
+		gameObject.name = ZoneName;
 	}
 	private void Update()
 	{
 		ArrangeCards();
 	}
 
-	virtual protected void ArrangeCards()
-	{
-	}
-
 	virtual public bool AddCard(Card card)
 	{
 		Debug.Assert(!m_cards.Contains(card));
+		card.CurrentZone.RemoveCard(card);
 
 		if (CardsEnterHidden)
 		{
@@ -76,15 +77,23 @@ public class Zone : MonoBehaviour
 			card.Revealed = true;
 		}
 
+		card.Draggable = CardsEnterDraggable;
+
 		m_cards.Add(card);
 		card.CurrentZone = this;
 		return true;
 	}
 
-	virtual public void RemoveCard(Card card)
+	protected void RemoveCard(Card card)
 	{
 		if (m_cards.Contains(card))
 			m_cards.Remove(card);
+
+		card.CurrentZone = null;
+	}
+
+	virtual protected void ArrangeCards()
+	{
 	}
 
 	public void ListSubzones()
