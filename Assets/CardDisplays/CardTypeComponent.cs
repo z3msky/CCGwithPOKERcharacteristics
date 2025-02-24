@@ -2,9 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Card))]
 public class CardTypeComponent : MonoBehaviour
 {
     public CardType CardTypeOfComponent { get; protected set; }
+    public Card Card
+    {
+        get
+        {
+            return GetComponent<Card>();
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

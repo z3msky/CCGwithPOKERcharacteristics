@@ -8,40 +8,33 @@ using TMPro;
 public class ZoneManager : MonoBehaviour
 {
 	public TextMeshProUGUI debugtext;
+	public GraphicRaycaster Raycaster;
 
 	public Zone ZoneHoveredOver()
 	{
-		GraphicRaycaster rc = GetComponent<GraphicRaycaster>();
-		EventSystem eventSystem = EventSystem.current;
-		LayerMask oldMask = rc.blockingMask;
+		Debug.Assert(Raycaster != null);
+
+		EventSystem evSys = EventSystem.current;
+		LayerMask oldMask = Raycaster.blockingMask;
 		LayerMask zoneOnlyMask = LayerMask.GetMask("Zones");
-		PointerEventData eventData = new PointerEventData(eventSystem);
+		PointerEventData eventData = new PointerEventData(evSys);
 		eventData.position = Input.mousePosition;
 
-		rc.blockingMask = zoneOnlyMask;
+		Raycaster.blockingMask = zoneOnlyMask;
 		List<RaycastResult> results = new List<RaycastResult>();
-		rc.Raycast(eventData, results);
-		rc.blockingMask = oldMask;
+		Raycaster.Raycast(eventData, results);
+		Raycaster.blockingMask = oldMask;
 
 		foreach (var r in results)
 		{
 			if (r.gameObject.GetComponent<Zone>() != null)
 			{
-				if (debugtext != null)
-				{
-					debugtext.text = r.gameObject.GetComponent<Zone>().ZoneName;
-				}
-
 				ZoneBorder border = r.gameObject.GetComponentInChildren<ZoneBorder>();
 				return r.gameObject.GetComponent<Zone>();
 			}
 		}
 
-		if (debugtext != null)
-		{
-			debugtext.text = "None";
-		}
-
 		return null;
 	}
+
 }

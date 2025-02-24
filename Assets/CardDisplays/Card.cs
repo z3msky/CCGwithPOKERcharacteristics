@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
 
-public class Card : MonoBehaviour
+public class Card : Zone
 {
     [Header("CardData Asset")]
     public CardData DragToSetCardData = null;
@@ -16,7 +16,6 @@ public class Card : MonoBehaviour
     public float LerpRatio;
     public Vector2 FloatingDirection;
     public float FloatingDegree;
-    public bool Draggable;
 
 	[Header("Card Design Elements")]
     public Sprite[] RankSprites;
@@ -27,15 +26,18 @@ public class Card : MonoBehaviour
     public Sprite PairSprite;
     public Sprite ThreeofSprite;
     public Sprite CardBGSprite;
-    public Sprite CardBackSprite;
-    public float RandomOffsetAmount;
+    public Sprite CardBackLogoSprite;
+
+	[Header("CardDesignSettings")]
+	public float RandomOffsetAmount;
+    public float DisplayHeightTarget;
 
     [Header("Card Design References")]
     public Image FloatingCard;
     public Image RankImage;
     public Image SuitImage;
     public Image CardArtImage;
-    public Image CardBGImage;
+    public GameObject Cardback;
     public TextMeshProUGUI PowerToughnessText;
     public TextMeshProUGUI CardNameText;
     public TextMeshProUGUI RulesText;
@@ -61,7 +63,8 @@ public class Card : MonoBehaviour
     {
         get 
         {
-            return m_cardData;
+			Debug.Assert(m_cardData != null, gameObject.name + "Has no card data asset!");
+			return m_cardData;
         }
 
         set
@@ -71,6 +74,27 @@ public class Card : MonoBehaviour
 			SetupCardTypeComponents();
 		}
     }
+
+    public string CardName
+    {
+        get
+        {
+            string result = CardDataAsset.CardName;
+            return result;
+        }
+    }
+    public int Rank
+    {
+        get { return CardDataAsset.Rank; }
+    }
+    public Suit Suit
+    {
+        get
+        {
+            return CardDataAsset.Suit;
+        }
+    }
+
 
     private bool m_revealed;
     public bool Revealed
@@ -87,14 +111,52 @@ public class Card : MonoBehaviour
         }
     }
 
-    public bool CanBePlayed()
+    public bool CanBePlayedAsCard
     {
-        return true;
+        get
+        {
+            return true;
+        }
+    }
+	public bool CanBePlayedAsTrace
+	{
+		get
+		{
+			return CardDataAsset.IsNonFace;
+		}
+	}
+    public bool IsFace
+    {
+        get
+        {
+            return CardDataAsset.IsFace;
+        }
+    }
+    public bool IsNumber
+    {
+        get
+        {
+            return CardDataAsset.IsNumber;
+        }
+    }
+    public bool IsCardType(CardType type)
+    {
+        foreach (CardTypeComponent co in GetComponentsInChildren<CardTypeComponent>())
+        {
+            if (co.CardTypeOfComponent == type)
+                return true;
+        }
+
+        return false;
     }
 
+    // Positioning strategies
 	private ICardMotionStrategy m_currPosStrat;
 	private ICardMotionStrategy m_defaultPosStrat;
 	private ICardMotionStrategy m_dragPosStrat;
+
+    // Scene References
+    private Dealer m_dealer;
 
 
 	// Start is called before the first frame update
@@ -104,7 +166,10 @@ public class Card : MonoBehaviour
         m_defaultPosStrat = new DefaultCardMotionStrategy();
         m_dragPosStrat = new DragCardMotionStrategy();
         m_currPosStrat = m_defaultPosStrat;
-    }
+
+        m_dealer = FindAnyObjectByType<Dealer>();
+        Debug.Assert(m_dealer != null);
+	}
 
     // Update is called once per frame
     void Update()
@@ -118,7 +183,10 @@ public class Card : MonoBehaviour
             CardDataAsset = DragToSetCardData;
             DragToSetCardData = null;
         }
-    }
+
+		UpdateCardRotation();
+		UpdateCardDisplayHeight();
+	}
 
     void SetupCardTypeComponents()
     {
@@ -138,15 +206,12 @@ public class Card : MonoBehaviour
         }
 
         UpdateCardDisplay();
-        UpdateCardRotation();
     }
 
     void UpdateCardDisplay()
 	{
         if (!Revealed)
         {
-            CardBGImage.sprite = CardBackSprite;
-
 			CardArtImage.enabled = false;
 			RankImage.enabled = false;
 			SuitImage.enabled = false;
@@ -154,10 +219,12 @@ public class Card : MonoBehaviour
 		    PowerToughnessText.enabled = false;
             RulesText.enabled = false;
 
+            Cardback.gameObject.SetActive(true);
+
 			return;
 		}
 
-        CardBGImage.sprite = CardBGSprite;
+		Cardback.gameObject.SetActive(false);
 
 		CardArtImage.enabled = true;
 		RankImage.enabled = true;
@@ -193,12 +260,32 @@ public class Card : MonoBehaviour
 		//CardNameText.text = CardDataAsset.CardName.ToUpper();
 		CardNameText.text = CardDataAsset.ShortName.ToUpper();
         RulesText.text = CardDataAsset.RulesText;
-		gameObject.name = CardDataAsset.CardName;
+		gameObject.name = CardDataAsset.CardName + " " + gameObject.GetInstanceID();
 	}
 
     public void UpdateCardRotation()
     {
     }
+
+    public void UpdateCardDisplayHeight()
+    {
+        Rect old = GetComponent<Image>().rectTransform.rect;
+        float h = Mathf.Lerp(old.height, DisplayHeightTarget, LerpRatio * Time.deltaTime * 2);
+
+        GetComponent<Image>().rectTransform
+            .SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+
+        // kind of lazy but using opacity
+        // because TypeComponent deals with enabling
+        if (h >= 150)
+        {
+            RulesText.alpha = 1;
+        }
+        else
+        {
+            RulesText.alpha = 0;
+        }
+	}
 
     public void LerpToward(Vector2 target)
     {
@@ -208,29 +295,30 @@ public class Card : MonoBehaviour
 
 	public void Drag()
 	{
-        if (Draggable)
-        {
-			GetComponent<Image>().enabled = true;
-			transform.SetAsLastSibling();
-			Zone hoveredZone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
-			m_currPosStrat = m_dragPosStrat;
-        }
+        if (!CurrentZone.PlayerCanDragCards) return;
+        if (!m_dealer.GameMode.PlayerCanDragCards) return;
+        if (m_dealer.DealerIsActive) return;
+
+		GetComponent<Image>().enabled = true;
+		transform.SetAsLastSibling();
+		m_currPosStrat = m_dragPosStrat;
 	}
 
 	public void Drop()
 	{
+        // Do this stuff regardless
+		TargetPosition = transform.position;
+		m_currPosStrat = m_defaultPosStrat;
+		GetComponent<Image>().enabled = false;
+		FloatingCard.transform.position = transform.position;
 
-        if (Draggable)
-        {
-            TargetPosition = transform.position;
-            m_currPosStrat = m_defaultPosStrat;
+		// Everything after here only if valid
+		if (!CurrentZone.PlayerCanDragCards) return;
+		if (!m_dealer.GameMode.PlayerCanDragCards) return;
+		if (m_dealer.DealerIsActive) return;
+		if (!CanBePlayedAsCard && !CanBePlayedAsTrace) return;
 
-            Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
-
-            FindAnyObjectByType<Dealer>().MoveCardToZone(this, zone);
-
-            FloatingCard.transform.position = transform.position;
-            GetComponent<Image>().enabled = false;
-        }
+		Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
+		zone.TryPlayCardToZone(this);
 	}
 }

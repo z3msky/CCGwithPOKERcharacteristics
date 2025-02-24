@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 public class ZoneBorder : MonoBehaviour
 {
+    public Color DefaultColor;
+    public Color HighlightColor;
     public Image[] Images;
+
+    private Color m_oldDefault;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,10 +21,23 @@ public class ZoneBorder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (m_oldDefault != DefaultColor)
+        {
+            SetColor(DefaultColor);
+            m_oldDefault = DefaultColor;
+        }
     }
 
-    public void SetColor(Color color)
+    public void Highlight()
+    {
+        SetColor(HighlightColor);
+    }
+	public void UnHighlight()
+	{
+		SetColor(DefaultColor);
+	}
+
+	public void SetColor(Color color)
     {
         foreach (var item in Images)
         {
