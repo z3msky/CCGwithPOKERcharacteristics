@@ -33,7 +33,7 @@ public class MoveCardAction : DealerAction
 		Debug.Assert(m_card != null);
 		Debug.Assert(m_src.Cards.Contains(m_card), "MoveCard: Card no longer in source Zone");
 
-		m_dealer.MoveCardToZone(m_card, m_dest);
+		m_dealer.InstantMoveCardToZone(m_card, m_dest);
 	}
 
 	override protected void ProcessAction()

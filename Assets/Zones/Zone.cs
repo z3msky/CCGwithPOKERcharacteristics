@@ -28,7 +28,6 @@ public class Zone : MonoBehaviour
 			return result;
 		}
 	}
-
 	public List<Zone> Subzones 
     { 
         get
@@ -45,6 +44,7 @@ public class Zone : MonoBehaviour
             return result;
         } 
     }
+	public PlayerStateTracker ZoneOwner { get; set; }
 
 	protected Canvas CardCanvasRef;
 	protected Dealer DealerRef;
@@ -76,6 +76,21 @@ public class Zone : MonoBehaviour
 		ZoneTypeUpdate();
 	}
 
+	public void Shuffle()
+	{
+		Random.InitState((int) (System.DateTime.Now.ToBinary() * 1000));
+		for (int i = 0; i < m_cards.Count - 1; i++)
+		{
+			int j = Random.Range(i + 1, m_cards.Count - 1);
+
+			Card tmp = m_cards[i];
+			m_cards[i] = m_cards[j];
+			m_cards[j] = tmp;
+
+			m_cards[i].transform.SetAsLastSibling();
+		}
+	}
+
 	virtual protected void ZoneTypeStart()
 	{
 
@@ -89,6 +104,7 @@ public class Zone : MonoBehaviour
 	virtual public bool AddCard(Card card)
 	{
 		Debug.Assert(!m_cards.Contains(card));
+
 		card.CurrentZone.RemoveCard(card);
 
 		if (CardsEnterHidden)
@@ -104,6 +120,7 @@ public class Zone : MonoBehaviour
 
 		m_cards.Add(card);
 		card.CurrentZone = this;
+		card.UpdateCardDisplay();
 
 		return true;
 	}
@@ -128,21 +145,15 @@ public class Zone : MonoBehaviour
 		}
 	}
 
-	virtual public void TryPlayCardToZone(Card card)
+	virtual public void DamageZone(int dmg)
 	{
-		// Play the card as a trace
-		if (CanAcceptAsTrace(card) && !CanAcceptAsCard(card))
-		{
-			TraceSlot slot = this as TraceSlot;
-			Debug.Assert(slot != null, "Attempted to play trace to invalid zone!");
+		Debug.Assert(ZoneOwner != null);
 
-			slot.PlayCardAsTrace(card);
-		}
+		ZoneOwner.Damage(dmg);
+	}
 
-		if (CanAcceptAsCard(card))
-		{
-			this.AddCard(card);
-		}
+	virtual public void PlayCardAsTrace(Card card)
+	{
 	}
 
 	virtual public bool CanAcceptAsTrace(Card card)
@@ -156,6 +167,11 @@ public class Zone : MonoBehaviour
 	}
 
 	virtual public bool CanAcceptAsSummon(Card card)
+	{
+		return false;
+	}
+
+	virtual public bool CardsDisappear()
 	{
 		return false;
 	}

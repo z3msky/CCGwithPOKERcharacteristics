@@ -22,6 +22,7 @@ public class CardData : ScriptableObject
 	public int Power;
 	public int Toughness;
 
+
 	public string RankString
 	{
 		get
@@ -41,27 +42,6 @@ public class CardData : ScriptableObject
 				default:
 					return Rank.ToString();
 			}
-		}
-	}
-
-	public bool IsFace {
-		get
-		{
-			return Rank >= 11 & Rank < 13;
-		}
-	}
-	public bool IsNumber
-	{
-		get
-		{
-			return Rank >=2 && Rank <= 10;
-		}
-	}
-	public bool IsNonFace
-	{
-		get
-		{
-			return !IsFace;
 		}
 	}
 }

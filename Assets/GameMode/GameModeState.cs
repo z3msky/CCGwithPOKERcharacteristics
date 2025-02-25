@@ -6,6 +6,14 @@ public class GameModeState
 {
 	protected GameMode m_gameMode;
 
+	virtual public GameModeState NextGameModePhase
+	{
+		get
+		{
+			return null;
+		}
+	}
+
 	public void SetGameModeRef(GameMode gameMode)
 	{
 		m_gameMode = gameMode;
@@ -28,6 +36,12 @@ public class GameModeState
 
 	virtual public bool PlayerCanDrag()
 	{
+		return false;
+	}
+
+	virtual public bool UsesNextPhaseButton(out string Label)
+	{
+		Label = "Not a button";
 		return false;
 	}
 }

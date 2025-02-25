@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class PlayerNeutralState: GameModeState
 {
+
+	override public GameModeState NextGameModePhase
+	{
+		get
+		{
+			return new PlayerDeclareAttackState();
+		}
+	}
+
 	override public void SetupState()
 	{
 
@@ -16,6 +25,12 @@ public class PlayerNeutralState: GameModeState
 
 	override public bool PlayerCanDrag()
 	{
+		return true;
+	}
+
+	override public bool UsesNextPhaseButton(out string Label)
+	{
+		Label = "Combat";
 		return true;
 	}
 }

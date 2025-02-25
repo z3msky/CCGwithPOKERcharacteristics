@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c4323c6b8c9aff4ea7cf5c23ce6e1bc, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: 
+  SelectLow: {fileID: 8300000, guid: 8fa9e0c0e16b2574184fe2530d4ed582, type: 3}
+  AdvanceSound: {fileID: 8300000, guid: ab3faa9b93160924da974eb14ddb78f5, type: 3}
+  DefaultAttackSound: {fileID: 8300000, guid: 72eeddbcc95011c43908c68c7806ce96, type: 3}

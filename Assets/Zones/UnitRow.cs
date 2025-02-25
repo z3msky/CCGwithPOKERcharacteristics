@@ -11,7 +11,7 @@ public class UnitRow : Zone
 
         foreach (Zone z in Subzones)
         {
-            TraceSlot us = z as TraceSlot;
+            FieldSlot us = z as FieldSlot;
             if (us != null)
             {
                 result = result || us.CanAcceptAsTrace(card);

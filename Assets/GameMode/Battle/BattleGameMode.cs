@@ -4,43 +4,81 @@ using UnityEngine;
 
 public class BattleGameMode : GameMode
 {
+	public PlayerStateTracker PlayerRef;
+	public PlayerStateTracker EnemyRef;
+
+	public Pile PlayerHand;
 	public CardList PlayerDecklist;
 	public Pile PlayerDeck;
-	public Pile PlayerHand;
 	public UnitRow PlayerBackRow;
+	public UnitRow PlayerFrontRow;
+	public UnitRow EnemyRow;
 	public SelectionSlot SummonSlot;
 	public GameObject SelectorButtonPrefab;
 	public GameObject BlockerButtonPrefab;
 
+	public int TurnNumber {  get; private set; }
+
 	override public void GameSetup()
 	{
 		Debug.Assert(SelectorButtonPrefab != null, "Battle game mode needs SelectorButtonPrefab");
-		Debug.Log("Setting up regular battle game mode");
+		//Debug.Log("Setting up regular battle game mode");
 
-		DealerRef.GenerateDeck(PlayerDecklist, PlayerDeck);
+		PlayerRef.MaxLife = 40;
+		EnemyRef.MaxLife = 40;
+		SetZoneOwners();
 
-		DealerRef.Queue(new MoveCardAction(PlayerDeck.NthCardFromTop(0), PlayerHand));
-		DealerRef.Queue(new MoveCardAction(PlayerDeck.NthCardFromTop(1), PlayerHand));
-		DealerRef.Queue(new MoveCardAction(PlayerDeck.NthCardFromTop(2), PlayerHand));
+		//DealerRef.GenerateDeck(PlayerDecklist, PlayerDeck);
+		m_dealer.GenerateDefaultDeck(PlayerDeck, Suit.HEARTS);
+		PlayerDeck.Shuffle();
 
-		SwapState(new PlayerNeutralState());
+		SwapState(new PlayerStartTurnState());
+		//SwapState(new PlayerNeutralState());
 	}
 
-	override public void UpdateStateMachine()
+	override public void UpdateGameMode()
 	{
-		Debug.Assert(DealerRef != null);
-		m_state.UpdateState();
+		base.UpdateGameMode();
 	}
 
 	private void Update()
 	{
 	}
 
-
-
-	public void DrawOneCard()
+	public void QueueTryDraw(int n = 1)
 	{
-		if (PlayerDeck.Cards.Length > 0)
-			DealerRef.Queue(new MoveCardAction(PlayerDeck.NthCardFromTop(0), PlayerHand));
+		if (n < 1) return;
+
+		for (int i = 0; i < n; i++)
+		{
+			m_dealer.Queue(new TryDrawOneAction(PlayerDeck, PlayerHand));
+		}
+	}
+
+	public void TryDrawUpTo(int n)
+	{
+		int m = n - PlayerHand.Cards.Length;
+		if (m > 0)
+		{
+			QueueTryDraw(m);
+		}
+	}
+
+	private void SetZoneOwners()
+	{
+		foreach (Zone zone in EnemyRow.Subzones)
+		{
+			zone.ZoneOwner = EnemyRef;
+		}
+
+		foreach (Zone zone in PlayerBackRow.Subzones)
+		{
+			zone.ZoneOwner = PlayerRef;
+		}
+
+		foreach (Zone zone in PlayerFrontRow.Subzones)
+		{
+			zone.ZoneOwner = PlayerRef;
+		}
 	}
 }

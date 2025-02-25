@@ -10,6 +10,7 @@ public class AttemptSummonState : GameModeState
 	private BattleGameMode m_battle;
 	private List<Button> m_selectorButtons;
 	private Button m_cancelButton;
+	private Color m_defaultSlotColor;
 
 	public AttemptSummonState(Card summonCard)
 	{
@@ -20,6 +21,7 @@ public class AttemptSummonState : GameModeState
 	{
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null, "Cannot attempt summon in non-battle game mode");
+		m_defaultSlotColor = m_battle.SummonSlot.GetComponent<Image>().color;
 
 		m_selectLabel = m_battle.SummonSlot.GetComponent<ZoneLabeller>();
 		
@@ -29,7 +31,7 @@ public class AttemptSummonState : GameModeState
 		}
 
 
-		GameObject cancelButtonObj = GameObject.Instantiate(m_battle.BlockerButtonPrefab, m_battle.DealerRef.UICanvas.transform);
+		GameObject cancelButtonObj = GameObject.Instantiate(m_battle.BlockerButtonPrefab, m_battle.m_dealer.UICanvas.transform);
 		m_cancelButton = cancelButtonObj.GetComponent<Button>();
 		Debug.Assert(m_cancelButton != null);
 
@@ -39,11 +41,31 @@ public class AttemptSummonState : GameModeState
 
 		if (validSlotExists)
 		{
+			m_battle.SummonSlot.GetComponent<Image>().color = m_defaultSlotColor;
 			m_gameMode.SetDialogueReadout("Select a zone to summon " + m_summonCard.CardName);
+			m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.SelectForSummonSound);
 		}
 		else
 		{
-			m_gameMode.SetDialogueReadout("You cannot play that now");
+			m_battle.SummonSlot.GetComponent<Image>().color = Color.red;
+			if (m_selectLabel != null)
+			{
+				m_selectLabel.SetLabel("Invalid");
+			}
+
+			if (m_summonCard.IsNumber)
+				m_gameMode.SetDialogueReadout("You can only summon a Numbered card to a zone with total pips greater than or equal to its rank.");
+			else if (m_summonCard.IsAce)
+				m_gameMode.SetDialogueReadout("You can only summon an Ace to an empty zone");
+			else if (m_summonCard.Rank == 11)
+				m_gameMode.SetDialogueReadout("You can only summon a Jack to an empty zone if you control a unit of the Jack's suit.");
+			else if (m_summonCard.Rank == 12)
+				m_gameMode.SetDialogueReadout("You can only summon a Queen to an empty zone if you control two units of the Queen's suit.");
+			else if (m_summonCard.Rank == 13)
+				m_gameMode.SetDialogueReadout("You can only summon a King to an empty zone if you control three units of the King's suit.");
+
+
+			m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.RejectSound);
 		}
 	}
 
@@ -53,6 +75,8 @@ public class AttemptSummonState : GameModeState
 
 	public override void EndState()
 	{
+		m_battle.SummonSlot.GetComponent<Image>().color = m_defaultSlotColor;
+
 		if (m_selectLabel != null)
 		{
 			m_selectLabel.SetLabel("Select");
@@ -74,13 +98,13 @@ public class AttemptSummonState : GameModeState
 
 		foreach (Zone zone in backrow.Subzones)
 		{
-			TraceSlot traceSlot = zone as TraceSlot;
+			FieldSlot traceSlot = zone as FieldSlot;
 			Debug.Assert(traceSlot != null);
 
 			if (traceSlot.CanAcceptAsSummon(m_summonCard))
 			{
 				validSlotExists = true;
-				GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.DealerRef.UICanvas.transform);
+				GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.m_dealer.UICanvas.transform);
 
 				selectorButton.transform.position = zone.transform.position;
 				selectorButton.transform.SetAsLastSibling();
@@ -100,13 +124,15 @@ public class AttemptSummonState : GameModeState
 
 	private void SummonCard(Zone zone)
 	{
-		m_gameMode.DealerRef.Queue(new MoveCardAction(m_summonCard, zone));
 		m_gameMode.SwapState(new PlayerNeutralState());
+
+		Debug.Assert(zone as FieldSlot != null);
+		(zone as FieldSlot).PlayCardAsSummon(m_summonCard);
 	}
 
 	private void CancelSummon()
 	{
-		m_gameMode.DealerRef.Queue(new MoveCardAction(m_summonCard, m_battle.PlayerHand));
+		m_gameMode.m_dealer.Queue(new MoveCardAction(m_summonCard, m_battle.PlayerHand));
 		m_gameMode.SwapState(new PlayerNeutralState());
 	}
 }

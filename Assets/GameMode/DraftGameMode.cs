@@ -10,11 +10,8 @@ public class DraftGameMode : GameMode
 	public Pile PlayerPile;
 	public SelectionSlot DraftSlot;
 
-	private Dealer m_dealer;
-
 	override public void GameSetup()
 	{
-		m_dealer = GetComponent<Dealer>();
 
 		Debug.Assert(EnemyPile != null);
 		Debug.Assert(PlayerPile != null);
@@ -24,7 +21,7 @@ public class DraftGameMode : GameMode
 		m_dealer.GenerateDeck(DebugDeck, EnemyPack);
 	}
 
-	override public void UpdateStateMachine()
+	override public void UpdateGameMode()
 	{
 		Debug.Assert(m_dealer != null);
 		Debug.Log("Queue Empty");

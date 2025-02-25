@@ -21,7 +21,7 @@ public class Pile : Zone
 
 	}
 
-    public Card NthCardFromTop(int n = 0)
+    public Card CardFromTop(int n = 0)
     {
         Debug.Assert(n < Cards.Length);
         Debug.Assert(n >= 0);

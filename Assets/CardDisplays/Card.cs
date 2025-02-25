@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
 
-public class Card : Zone
+public class Card : Slot
 {
     [Header("CardData Asset")]
     public CardData DragToSetCardData = null;
@@ -31,6 +31,8 @@ public class Card : Zone
 	[Header("CardDesignSettings")]
 	public float RandomOffsetAmount;
     public float DisplayHeightTarget;
+    public Color NormalCardColor;
+    public Color TraceCardColor;
 
     [Header("Card Design References")]
     public Image FloatingCard;
@@ -95,7 +97,6 @@ public class Card : Zone
         }
     }
 
-
     private bool m_revealed;
     public bool Revealed
     {
@@ -110,6 +111,7 @@ public class Card : Zone
             UpdateCardDisplay();
         }
     }
+    public bool TraceMode { get; set; }
 
     public bool CanBePlayedAsCard
     {
@@ -122,21 +124,28 @@ public class Card : Zone
 	{
 		get
 		{
-			return CardDataAsset.IsNonFace;
+			return !IsFace;
 		}
 	}
     public bool IsFace
     {
         get
         {
-            return CardDataAsset.IsFace;
+            return CardDataAsset.Rank >= 11 && CardDataAsset.Rank <= 13;
         }
     }
     public bool IsNumber
     {
         get
         {
-            return CardDataAsset.IsNumber;
+            return CardDataAsset.Rank >= 2 && CardDataAsset.Rank <= 10;
+        }
+    }
+    public bool IsAce
+    {
+        get
+        {
+            return CardDataAsset.Rank == 1;
         }
     }
     public bool IsCardType(CardType type)
@@ -158,6 +167,9 @@ public class Card : Zone
     // Scene References
     private Dealer m_dealer;
 
+    // Comps
+    private Animator m_animator;
+
 
 	// Start is called before the first frame update
 	void Start()
@@ -166,9 +178,13 @@ public class Card : Zone
         m_defaultPosStrat = new DefaultCardMotionStrategy();
         m_dragPosStrat = new DragCardMotionStrategy();
         m_currPosStrat = m_defaultPosStrat;
+        TraceMode = false;
 
         m_dealer = FindAnyObjectByType<Dealer>();
         Debug.Assert(m_dealer != null);
+
+        m_animator = GetComponent<Animator>();
+        Debug.Assert(m_animator != null);
 	}
 
     // Update is called once per frame
@@ -186,6 +202,11 @@ public class Card : Zone
 
 		UpdateCardRotation();
 		UpdateCardDisplayHeight();
+
+        foreach (Card card in Cards)
+        {
+            card.transform.position = transform.position;
+        }
 	}
 
     void SetupCardTypeComponents()
@@ -208,8 +229,19 @@ public class Card : Zone
         UpdateCardDisplay();
     }
 
-    void UpdateCardDisplay()
+    public void UpdateCardDisplay()
 	{
+        FloatingCard.gameObject.SetActive(!CurrentZone.CardsDisappear());
+
+        if (TraceMode)
+        {
+            FloatingCard.color = TraceCardColor;
+        }
+        else
+        {
+            FloatingCard.color = NormalCardColor;
+        }
+
         if (!Revealed)
         {
 			CardArtImage.enabled = false;
@@ -270,14 +302,25 @@ public class Card : Zone
     public void UpdateCardDisplayHeight()
     {
         Rect old = GetComponent<Image>().rectTransform.rect;
-        float h = Mathf.Lerp(old.height, DisplayHeightTarget, LerpRatio * Time.deltaTime * 2);
 
-        GetComponent<Image>().rectTransform
-            .SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+        float hRatio = old.height / DisplayHeightTarget;
+		float h = Mathf.Lerp(old.height, DisplayHeightTarget, LerpRatio * Time.deltaTime * 2);
 
-        // kind of lazy but using opacity
-        // because TypeComponent deals with enabling
-        if (h >= 150)
+		if (hRatio >= 0.95f || hRatio <= 1.05f)
+        {
+			GetComponent<Image>().rectTransform
+			.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, DisplayHeightTarget);
+		}
+        else
+        {
+			GetComponent<Image>().rectTransform
+				.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+		}
+
+
+		// kind of lazy but using opacity
+		// because TypeComponent deals with enabling
+		if (h >= 150)
         {
             RulesText.alpha = 1;
         }
@@ -316,9 +359,46 @@ public class Card : Zone
 		if (!CurrentZone.PlayerCanDragCards) return;
 		if (!m_dealer.GameMode.PlayerCanDragCards) return;
 		if (m_dealer.DealerIsActive) return;
-		if (!CanBePlayedAsCard && !CanBePlayedAsTrace) return;
+		if ((!CanBePlayedAsCard) && (!CanBePlayedAsTrace)) return;
 
 		Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
-		zone.TryPlayCardToZone(this);
+        Debug.Log("Drop on zone " + zone.ZoneName);
+
+        if (zone.CanAcceptAsTrace(this))
+        {
+            zone.PlayCardAsTrace(this);
+        }
+
+        if (zone.CanAcceptAsCard(this))
+        {
+            zone.AddCard(this);
+        }
 	}
+
+    override public bool CardsDisappear()
+    {
+        return true;
+    }
+
+    public void PlayAnimation(string name)
+    {
+        Debug.Assert(m_animator != null);
+        m_animator.Play(name, 0, 0);
+    }
+
+    public bool AnimationComplete(string name)
+    {
+        Debug.Assert(m_animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals(name));
+        return m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !m_animator.IsInTransition(0);
+    }
+
+	public void PlayAttackSound()
+	{
+		SFXManager sfx = FindAnyObjectByType<SFXManager>();
+		Debug.Assert(sfx != null);
+		AudioClip clip = sfx.Library.DefaultAttackSound;
+
+		sfx.PlayPitched(clip);
+	}
+
 }

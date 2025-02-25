@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayCardManager))]
-[RequireComponent(typeof(ZoneManager))]
 [RequireComponent(typeof(GameMode))]
+[RequireComponent(typeof(ZoneManager))]
+[RequireComponent(typeof(SFXManager))]
 public class Dealer : MonoBehaviour
 {
     public GameObject EmptyCardObject;
     public Zone RootZone;
     public Canvas MainCanvas;
     public Canvas UICanvas;
+    public Canvas DecorationCanvas;
     public Canvas CardCanvas;
+    public CardData EmptyCard;
 
     public DealerAction CurrentAction
     {
@@ -29,8 +31,11 @@ public class Dealer : MonoBehaviour
         }
     }
 
-    public ZoneManager ZoneManager { get; private set; }
+    // GO Refs
     public GameMode GameMode { get; private set; }
+    public ZoneManager ZoneManager { get; private set; }
+    public SFXManager SFXManager { get; private set; }
+
     public bool DealerIsActive
     {
         get
@@ -45,10 +50,9 @@ public class Dealer : MonoBehaviour
     {
         ZoneManager = GetComponent<ZoneManager>();
         GameMode = GetComponent<GameMode>();
+        SFXManager = GetComponent<SFXManager>();
 
         m_queue = new Queue<DealerAction>();
-
-        Debug.Assert(GameMode != null);
 
         GameMode.GameSetup();
     }
@@ -58,7 +62,7 @@ public class Dealer : MonoBehaviour
         // If dealer has nothing to do the game mode handles game flow
         if (CurrentAction == null)
         {
-            GameMode.UpdateStateMachine();
+            GameMode.UpdateGameMode();
             return;
         }
 
@@ -66,10 +70,14 @@ public class Dealer : MonoBehaviour
         if (!CurrentAction.Started)
         {
             CurrentAction.Setup(this);
+            if (CurrentAction.UpdatesOnFirstFrame)
+			    CurrentAction.Process();
+		}
+        // Or simply process the current action
+        else
+        {
+            CurrentAction.Process();
         }
-
-        // Dealing with current action
-        CurrentAction.Process();
 
         // Remove it if it's done
         if (CurrentAction.Complete)
@@ -87,7 +95,6 @@ public class Dealer : MonoBehaviour
     public void Queue(DealerAction action)
     {
         m_queue.Enqueue(action);
-        GameMode.SetDialogueReadout("Dealer is Acting");
     }
 
 	// Dealer gets to update until queue is done
@@ -96,7 +103,7 @@ public class Dealer : MonoBehaviour
 	{
 	}
 
-	public void MoveCardToZone(Card card, Zone dest)
+	public void InstantMoveCardToZone(Card card, Zone dest)
     {
         Zone src = card.CurrentZone;
         Debug.Assert(card != null);
@@ -112,15 +119,6 @@ public class Dealer : MonoBehaviour
         {
             Debug.Log("[" + card.CardDataAsset.CardName + "] stayed in zone [" + src.name + "]");
             return;
-        }
-
-        if (dest.ZoneName == "PlayerHand")
-        {
-            SplashImage img = FindAnyObjectByType<SplashImage>();
-            if (img != null && card.CardDataAsset.CardArt != null)
-            {
-                img.ShowImage(card.CardDataAsset.CardArt);
-            }
         }
 
         Debug.Log("Move [" + card.CardDataAsset.CardName + "] from [" + src.ZoneName + "] -> [" + dest.ZoneName + "]");
@@ -145,5 +143,23 @@ public class Dealer : MonoBehaviour
             GenerateCard(card, dest);
         }
     }
+
+	public void GenerateDefaultDeck(Pile dest, Suit suit)
+	{
+        for (int rank = 1; rank <= 13; rank++)
+        {
+			CardData card = ScriptableObject.Instantiate(EmptyCard);
+
+               card.CardName = suit.ToString().ToLower() + " unit";
+               card.Rank = rank;
+               card.Suit = suit;
+               card.CardTypes = new CardType[1];
+               card.CardTypes[0] = CardType.UNIT;
+               card.Power = rank;
+               card.Toughness = rank;
+
+			GenerateCard(card, dest);
+		}
+	}
 
 }

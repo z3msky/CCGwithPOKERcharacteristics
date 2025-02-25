@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DealerAction
 {
+	public UnityEvent OnStartAction;
+	public AudioClip StartActionSound = null;
 
 	public float HoldTime {  get; private set; }
 	public bool Started { get; private set; }
@@ -14,6 +17,15 @@ public class DealerAction
 		{
 			return m_timer >= HoldTime;
 		}
+	}
+	virtual public bool UseTimer
+	{
+		get { return true; }
+	}
+
+	virtual public bool UpdatesOnFirstFrame
+	{
+		get { return true; }
 	}
 
 	private float m_timer;
@@ -31,6 +43,10 @@ public class DealerAction
 		m_dealer = dealer;
 		m_timer = 0;
 		SetupAction();
+		if (StartActionSound != null)
+		{
+			m_dealer.SFXManager.PlayPitched(StartActionSound);
+		}
 		Started = true;
 	}
 
@@ -40,8 +56,8 @@ public class DealerAction
 
 		ProcessAction();
 
-		if (HoldTimeComplete)
-			Complete = true;
+		if (UseTimer)
+			Complete = HoldTimeComplete;
 	}
 
 	virtual protected void SetupAction()
@@ -53,4 +69,6 @@ public class DealerAction
 	{
 		Complete = true;
 	}
+
+	
 }

@@ -1,0 +1,110 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerDeclareAttackState: GameModeState
+{
+
+	override public GameModeState NextGameModePhase
+	{
+		get
+		{
+			return new PlayerAttackState();
+		}
+	}
+
+	List<Button> m_selectorButtons;
+	List<ZoneBorder> m_selectorBorders;
+	private BattleGameMode m_battle;
+
+	override public void SetupState()
+	{
+		m_battle = m_gameMode as BattleGameMode;
+		Debug.Assert(m_battle != null);
+
+		m_selectorButtons = new List<Button>();
+		m_selectorBorders = new List<ZoneBorder>();
+		List<UnitTypeComponent> units = new List<UnitTypeComponent>();
+
+		foreach (Zone zone in m_battle.PlayerBackRow.Subzones)
+		{
+			foreach (Card card in zone.Cards)
+			{
+				UnitTypeComponent unitTypeComponent = card.GetComponent<UnitTypeComponent>();
+				if (unitTypeComponent != null)
+				{
+					units.Add(unitTypeComponent);
+				}
+			}
+		}
+
+		foreach (Zone zone in m_battle.PlayerFrontRow.Subzones)
+		{
+			foreach (Card card in zone.Cards)
+			{
+				UnitTypeComponent unitTypeComponent = card.GetComponent<UnitTypeComponent>();
+				if (unitTypeComponent != null)
+				{
+					units.Add(unitTypeComponent);
+				}
+			}
+		}
+
+		foreach (UnitTypeComponent unit in units)
+		{
+			Zone zone = unit.Card.CurrentZone;
+			Zone tmp;
+			if (m_battle.PlayerBackRow.Subzones.Contains(zone)
+				&& !unit.CanAdvanceOrRetreat(MoveType.ADVANCE, out tmp))
+			{
+				continue;
+			}
+
+			GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.m_dealer.UICanvas.transform);
+			selectorButton.transform.position = zone.transform.position;
+			selectorButton.transform.SetAsLastSibling();
+			selectorButton.GetComponent<RectTransform>().sizeDelta = zone.GetComponent<RectTransform>().sizeDelta;
+			m_selectorButtons.Add(selectorButton.GetComponent<Button>());
+
+			ZoneBorder border = selectorButton.GetComponentInChildren<ZoneBorder>();
+			border.transform.SetParent(m_gameMode.m_dealer.DecorationCanvas.transform);
+			m_selectorBorders.Add(border);
+
+			selectorButton.GetComponent<Button>().onClick.AddListener(() =>
+			{
+				unit.DeclaredAsAttacker = !unit.DeclaredAsAttacker;
+				m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.SelectLow);
+			});
+		}
+	}
+
+	override public void UpdateState()
+	{
+		m_gameMode.SetDialogueReadout("You may declare your attackers");
+	}
+
+	public override void EndState()
+	{
+		foreach (Button button in m_selectorButtons)
+		{
+			GameObject.Destroy(button.gameObject);
+		}
+
+		foreach (ZoneBorder border in m_selectorBorders)
+		{
+			GameObject.Destroy(border.gameObject);
+		}
+	}
+
+	override public bool PlayerCanDrag()
+	{
+		return false;
+	}
+
+	override public bool UsesNextPhaseButton(out string Label)
+	{
+		Label = "Attack";
+		return true;
+	}
+}

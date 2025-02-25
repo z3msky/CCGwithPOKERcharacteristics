@@ -1,0 +1,16 @@
+CARD GAME TITLE
+	a Haru Zemsky Game
+
+	Concept by Haru Zemsky
+	Art by Haru Zemsky
+	Code by Haru Zemsky
+	Sound Design by Haru Zemsky
+	Music by Haru Zemsky
+
+SOUNDS & Samples
+	UI Ding - Camera UI Ding by MaoDin204 -- https://freesound.org/s/722830/ -- License: Creative Commons 0
+	Sword Slice 13.wav by Black Snow -- https://freesound.org/s/109422/ -- License: Attribution 4.0
+	whoosh_short_mid.wav by DJT4NN3R -- https://freesound.org/s/449996/ -- License: Creative Commons 0
+	boneymsummoningsoundeffect.mp3 by Milky0519 -- https://freesound.org/s/522203/ -- License: Creative Commons 0
+	VibrateTimeEffect2.mp3 by Milky0519 -- https://freesound.org/s/518429/ -- License: Creative Commons 0
+	Menu Scroll/ Selection Sound by CS279 -- https://freesound.org/s/198778/ -- License: Creative Commons 0
