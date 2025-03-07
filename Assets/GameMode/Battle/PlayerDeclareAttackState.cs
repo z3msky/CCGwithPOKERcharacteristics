@@ -18,7 +18,7 @@ public class PlayerDeclareAttackState: GameModeState
 	List<ZoneBorder> m_selectorBorders;
 	private BattleGameMode m_battle;
 
-	override public void SetupState()
+	override protected void SetupState()
 	{
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null);
@@ -51,37 +51,45 @@ public class PlayerDeclareAttackState: GameModeState
 			}
 		}
 
+		bool validAttackerExists = false;
 		foreach (UnitTypeComponent unit in units)
 		{
 			Zone zone = unit.Card.CurrentZone;
-			Zone tmp;
-			if (m_battle.PlayerBackRow.Subzones.Contains(zone)
-				&& !unit.CanAdvanceOrRetreat(MoveType.ADVANCE, out tmp))
+			if (!unit.CanAttack())
 			{
+				if (unit.Card.EnteredThisTurn)
+					m_gameMode.SetDialogueReadout("Units cannot attack on the turn they enter.");
 				continue;
 			}
 
-			GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.m_dealer.UICanvas.transform);
+			validAttackerExists = true;
+
+			GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.dealer.UICanvas.transform);
 			selectorButton.transform.position = zone.transform.position;
 			selectorButton.transform.SetAsLastSibling();
 			selectorButton.GetComponent<RectTransform>().sizeDelta = zone.GetComponent<RectTransform>().sizeDelta;
 			m_selectorButtons.Add(selectorButton.GetComponent<Button>());
 
 			ZoneBorder border = selectorButton.GetComponentInChildren<ZoneBorder>();
-			border.transform.SetParent(m_gameMode.m_dealer.DecorationCanvas.transform);
+			border.transform.SetParent(m_gameMode.dealer.DecorationCanvas.transform);
 			m_selectorBorders.Add(border);
 
 			selectorButton.GetComponent<Button>().onClick.AddListener(() =>
 			{
 				unit.DeclaredAsAttacker = !unit.DeclaredAsAttacker;
-				m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.SelectLow);
+				m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.SelectLow);
 			});
+
+			unit.DeclaredAsAttacker = true;
 		}
+
+		if (validAttackerExists)
+			m_gameMode.SetDialogueReadout("Your units will attack if able, but you may order them to hold off.");
 	}
 
 	override public void UpdateState()
 	{
-		m_gameMode.SetDialogueReadout("You may declare your attackers");
+
 	}
 
 	public override void EndState()

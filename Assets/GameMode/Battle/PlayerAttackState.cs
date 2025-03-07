@@ -17,7 +17,7 @@ public class PlayerAttackState: GameModeState
 
 	private BattleGameMode m_battle;
 
-	override public void SetupState()
+	override protected void SetupState()
 	{
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null);
@@ -53,14 +53,16 @@ public class PlayerAttackState: GameModeState
 				continue;
 			
 			unit.QueueTryAdvanceOrRetreat();
-			unit.QueueTryAttack();
+			unit.QueueTryAttack(m_battle.EnemyRow);
 		}
+
+		Debug.Log("PA setup");
 	}
 
 	override public void UpdateState()
 	{
 		m_gameMode.SetDialogueReadout("");
-		m_gameMode.SwapState(new PlayerStartTurnState());
+		m_gameMode.SwapState(new EnemySummonState());
 	}
 
 	public override void EndState()

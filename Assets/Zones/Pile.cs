@@ -8,6 +8,15 @@ public class Pile : Zone
     public Vector3 Spread = new Vector3(0.3f, 0.8f, 0);
     public Vector3 Margin = Vector3.zero;
 
+    override protected void ZoneTypeUpdate()
+    {
+        ZoneLabeller label = GetComponentInChildren<ZoneLabeller>();
+        if (label != null)
+        {
+            label.SetLabel(Cards.Length.ToString());
+        }
+    }
+
     override protected void ArrangeCards()
     {
 

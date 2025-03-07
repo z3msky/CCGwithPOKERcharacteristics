@@ -16,14 +16,14 @@ public class DraftGameMode : GameMode
 		Debug.Assert(EnemyPile != null);
 		Debug.Assert(PlayerPile != null);
 		Debug.Assert(DraftSlot != null);
-		Debug.Assert(m_dealer != null);
+		Debug.Assert(dealer != null);
 
-		m_dealer.GenerateDeck(DebugDeck, EnemyPack);
+		dealer.GenerateDeck(DebugDeck, EnemyPack);
 	}
 
 	override public void UpdateGameMode()
 	{
-		Debug.Assert(m_dealer != null);
+		Debug.Assert(dealer != null);
 		Debug.Log("Queue Empty");
 	}
 }

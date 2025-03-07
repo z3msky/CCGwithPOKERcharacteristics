@@ -155,8 +155,8 @@ TextureImporter:
       name: KeywordSymbol_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 16
+        x: 32
+        y: 32
         width: 16
         height: 16
       alignment: 0
@@ -176,7 +176,7 @@ TextureImporter:
       name: KeywordSymbol_3
       rect:
         serializedVersion: 2
-        x: 16
+        x: 0
         y: 16
         width: 16
         height: 16
@@ -197,8 +197,8 @@ TextureImporter:
       name: KeywordSymbol_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 16
+        y: 16
         width: 16
         height: 16
       alignment: 0
@@ -218,8 +218,8 @@ TextureImporter:
       name: KeywordSymbol_5
       rect:
         serializedVersion: 2
-        x: 16
-        y: 0
+        x: 32
+        y: 16
         width: 16
         height: 16
       alignment: 0
@@ -231,6 +231,48 @@ TextureImporter:
       bones: []
       spriteID: dbc37ae062e190440ae9774e8203bfc7
       internalID: 961748831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: KeywordSymbol_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68fdef239e92a3a488931f772a97912f
+      internalID: 1107934069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: KeywordSymbol_7
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b6d27f7c2e9adf47b26d7d20388df0b
+      internalID: -103637096
       vertices: []
       indices: 
       edges: []
@@ -252,6 +294,8 @@ TextureImporter:
       KeywordSymbol_3: -2028806047
       KeywordSymbol_4: 1161224943
       KeywordSymbol_5: 961748831
+      KeywordSymbol_6: 1107934069
+      KeywordSymbol_7: -103637096
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

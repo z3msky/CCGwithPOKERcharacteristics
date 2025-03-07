@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FieldSlot : Slot
+public class FieldSlot : Slot, ITurnResettable
 {
 	public Zone TraceZone;
 	public Image TraceDisplay;
@@ -27,6 +27,7 @@ public class FieldSlot : Slot
 	int m_club;
 	int m_diamond;
 	int m_total;
+	int m_tracePlayedThisTurn;
 
 	override protected void ZoneTypeStart()
 	{
@@ -36,7 +37,14 @@ public class FieldSlot : Slot
 		m_traceImageOffset = TotalTracePanel.transform.position - transform.position;
 		TotalTracePanel.transform.SetParent(DealerRef.UICanvas.transform, true);
 
+		m_tracePlayedThisTurn = 0;
+
 		UpdateTraceCounts();
+	}
+
+	public void ResetForTurn()
+	{
+		m_tracePlayedThisTurn = 0;
 	}
 
 	override protected void ZoneTypeUpdate()
@@ -89,7 +97,10 @@ public class FieldSlot : Slot
 			return false;
 		}
 
-		return card.CanBePlayedAsTrace && Cards.Length == 0 && ValidTraceZone;
+		return card.CanBePlayedAsTrace 
+			&& Cards.Length == 0 
+			&& ValidTraceZone
+			&& m_tracePlayedThisTurn < 1;
 	}
 
 	override public bool CanAcceptAsCard(Card card)
@@ -163,19 +174,22 @@ public class FieldSlot : Slot
 		Debug.Assert(battle != null, "Cannot play as trace during non-battle game mode");
 
 		card.TraceMode = true;
-		FindAnyObjectByType<Dealer>().Queue(new MoveCardAction(card, TraceZone));
+		battle.dealer.Queue(new MoveCardAction(card, TraceZone));
+		battle.dealer.SFXManager.PlayPitched(battle.dealer.SFXManager.Library.CoinSound);
+		m_tracePlayedThisTurn++;
 	}
 
-	public void PlayCardAsSummon(Card card)
+	public void PlayCardAsSummon(Card card, bool OverrideValidity = false)
 	{
-		Debug.Assert(CanAcceptAsSummon(card));
+		Debug.Assert(CanAcceptAsSummon(card) || OverrideValidity);
 
 		MoveCardAction moveCardAction = new MoveCardAction(card, this, 0.8f);
 		moveCardAction.StartActionSound = DealerRef.SFXManager.Library.SummonSound;
-		DealerRef.GameMode.m_dealer.Queue(moveCardAction);
+		DealerRef.GameMode.dealer.Queue(moveCardAction);
+		card.OnEnterArena();
 		foreach (Card tc in TraceZone.Cards)
 		{
-			DealerRef.GameMode.m_dealer.Queue(new MoveCardAction(tc, card, 0));
+			DealerRef.GameMode.dealer.Queue(new MoveCardAction(tc, card, 0));
 		}
 	}
 

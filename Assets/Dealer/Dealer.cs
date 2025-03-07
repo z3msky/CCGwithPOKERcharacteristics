@@ -22,17 +22,41 @@ public class Dealer : MonoBehaviour
         get
         {
             DealerAction val;
-            bool success = m_queue.TryPeek(out val);
 
+            // Unless we're already working on a queued action,
+            bool success = m_queue.TryPeek(out val);
+            if (success && val.Started)
+            {
+                return val;
+            }
+
+            // we will do immediate action if one exists,
+            success = m_immediateActions.TryPeek(out val);
+            if (success)
+            {
+                return val;
+            }
+
+            // then otherwise do a queued action if one exists,
+            success = m_queue.TryPeek(out val);
             if (success)
                 return val;
 
+            // and if none of either exist we are idle
             return null;
         }
     }
 
     // GO Refs
     public GameMode GameMode { get; private set; }
+    public BattleGameMode Battle
+    {
+        get
+        {
+            Debug.Assert(GameMode is BattleGameMode, "Current game mode is not a battle");
+            return GameMode as BattleGameMode;
+        }
+    }
     public ZoneManager ZoneManager { get; private set; }
     public SFXManager SFXManager { get; private set; }
 
@@ -44,6 +68,7 @@ public class Dealer : MonoBehaviour
         }
     }
 
+    private Stack<DealerAction> m_immediateActions;
 	private Queue<DealerAction> m_queue;
 
     void Start()
@@ -53,6 +78,7 @@ public class Dealer : MonoBehaviour
         SFXManager = GetComponent<SFXManager>();
 
         m_queue = new Queue<DealerAction>();
+        m_immediateActions = new Stack<DealerAction>();
 
         GameMode.GameSetup();
     }
@@ -79,8 +105,14 @@ public class Dealer : MonoBehaviour
             CurrentAction.Process();
         }
 
-        // Remove it if it's done
-        if (CurrentAction.Complete)
+		// If we completed an immediate action
+		if (m_immediateActions.Contains(CurrentAction) && CurrentAction.Complete)
+		{
+			m_immediateActions.Pop();
+		}
+
+		// If we completed a queued action
+		if (m_queue.Contains(CurrentAction) && CurrentAction.Complete)
         {
             m_queue.Dequeue();
             if (m_queue.Count == 0)
@@ -95,6 +127,12 @@ public class Dealer : MonoBehaviour
     public void Queue(DealerAction action)
     {
         m_queue.Enqueue(action);
+    }
+
+    // Immediate actions will resolve immediately after the current action, LIFO
+    public void PushImmediateAction(DealerAction action)
+    {
+        m_immediateActions.Push(action);
     }
 
 	// Dealer gets to update until queue is done
@@ -117,7 +155,7 @@ public class Dealer : MonoBehaviour
 
         if (src == dest)
         {
-            Debug.Log("[" + card.CardDataAsset.CardName + "] stayed in zone [" + src.name + "]");
+            //Debug.Log("[" + card.CardDataAsset.CardName + "] stayed in zone [" + src.name + "]");
             return;
         }
 
@@ -155,11 +193,34 @@ public class Dealer : MonoBehaviour
                card.Suit = suit;
                card.CardTypes = new CardType[1];
                card.CardTypes[0] = CardType.UNIT;
-               card.Power = rank;
-               card.Toughness = rank;
+               card.Power = (rank/2)+2;
+               card.Toughness = (rank / 2) + 1;
 
 			GenerateCard(card, dest);
 		}
+	}
+
+	public RuntimeEnemyPlan GenerateDefaultPlan(Suit suit)
+	{
+        EnemyMove[] moves = new EnemyMove[13];
+
+		for (int rank = 1; rank <= 13; rank++)
+		{
+			CardData card = ScriptableObject.Instantiate(EmptyCard);
+
+			card.CardName = suit.ToString().ToLower() + " unit";
+			card.Rank = rank;
+			card.Suit = suit;
+			card.CardTypes = new CardType[1];
+			card.CardTypes[0] = CardType.UNIT;
+			card.Power = (rank / 2) + 2;
+			card.Toughness = (rank / 2) + 1;
+
+            int turn = Random.Range(0, 15);
+            moves[rank - 1] = new EnemyMove(card, turn);
+		}
+
+        return new RuntimeEnemyPlan(moves);
 	}
 
 }

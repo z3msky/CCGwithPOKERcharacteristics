@@ -14,3 +14,5 @@ SOUNDS & Samples
 	boneymsummoningsoundeffect.mp3 by Milky0519 -- https://freesound.org/s/522203/ -- License: Creative Commons 0
 	VibrateTimeEffect2.mp3 by Milky0519 -- https://freesound.org/s/518429/ -- License: Creative Commons 0
 	Menu Scroll/ Selection Sound by CS279 -- https://freesound.org/s/198778/ -- License: Creative Commons 0
+	Metallic File Select by Breviceps -- https://freesound.org/s/540478/ -- License: Creative Commons 0
+	2_Coins.ogg by jalastram -- https://freesound.org/s/223342/ -- License: Creative Commons 0

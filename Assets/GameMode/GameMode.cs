@@ -10,7 +10,7 @@ public class GameMode : MonoBehaviour
 	public TextMeshProUGUI InstructorReadout;
 	public Button NextPhaseButton;
 
-	public Dealer m_dealer
+	public Dealer dealer
 	{
 		get
 		{
@@ -41,8 +41,16 @@ public class GameMode : MonoBehaviour
 
 	virtual public void UpdateGameMode()
 	{
-		Debug.Assert(m_dealer != null);
-		m_state.UpdateState();
+		Debug.Assert(dealer != null);
+		if (m_state.Started)
+		{
+			m_state.UpdateState();
+		}
+		else
+		{
+			m_state.Setup();
+			m_state.Started = true;
+		}
 	}
 
 	public void SwapState(GameModeState state)
@@ -71,7 +79,7 @@ public class GameMode : MonoBehaviour
 			NextPhaseButton.gameObject.SetActive(false);
 		}
 
-		m_state.SetupState();
+		m_state.Started = false;
 	}
 
 	public void SetDialogueReadout(string text)

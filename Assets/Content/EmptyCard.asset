@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardName: 
   ShortName: 
-  CardArt: {fileID: 21300000, guid: e3227b72c40a8774bb900a28b6e056f0, type: 3}
+  CardArt: {fileID: 21300000, guid: 873a87ee36072ab4cbbeb3a72f669143, type: 3}
   CardTypes: 
   RulesText: 
+  CenteredRules: 0
   Rank: 0
   Suit: 0
   Power: 0
   Toughness: 0
+  RitualCostDesc: 
+  Effects: 

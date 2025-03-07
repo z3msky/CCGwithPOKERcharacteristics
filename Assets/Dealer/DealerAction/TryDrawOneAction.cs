@@ -19,8 +19,12 @@ public class TryDrawOneAction : DealerAction
 		Debug.Assert(m_pile != null);
 		Debug.Assert(m_target != null);
 
+
 		if (m_pile.Cards.Length > 0)
+		{
 			m_dealer.InstantMoveCardToZone(m_pile.CardFromTop(), m_target);
+			m_dealer.SFXManager.PlayPitched(m_dealer.SFXManager.Library.DrawSound);
+		}
 	}
 
 	override protected void ProcessAction()

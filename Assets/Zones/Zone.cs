@@ -44,7 +44,7 @@ public class Zone : MonoBehaviour
             return result;
         } 
     }
-	public PlayerStateTracker ZoneOwner { get; set; }
+	public PlayerEnemyCharacter ZoneOwner { get; set; }
 
 	protected Canvas CardCanvasRef;
 	protected Dealer DealerRef;
@@ -145,11 +145,24 @@ public class Zone : MonoBehaviour
 		}
 	}
 
-	virtual public void DamageZone(int dmg)
+	virtual public void ResolveDamage(int dmg)
 	{
-		Debug.Assert(ZoneOwner != null);
 
-		ZoneOwner.Damage(dmg);
+		if (Cards.Length > 0)
+		{
+			Debug.Assert(Cards.Length == 1);
+			IDamageable[] dmgables = Cards[0].GetComponents<IDamageable>();
+			foreach (IDamageable damageable in dmgables)
+			{
+				damageable.Damage(dmg);
+			}
+		}
+		else
+		{
+			Debug.Assert(ZoneOwner != null);
+			ZoneOwner.Damage(dmg);
+		}
+		
 	}
 
 	virtual public void PlayCardAsTrace(Card card)

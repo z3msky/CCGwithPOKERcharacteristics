@@ -13,7 +13,7 @@ public class PlayerNeutralState: GameModeState
 		}
 	}
 
-	override public void SetupState()
+	override protected void SetupState()
 	{
 
 	}

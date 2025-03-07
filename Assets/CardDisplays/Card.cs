@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
 
-public class Card : Slot
+public class Card : Slot, ITurnResettable
 {
     [Header("CardData Asset")]
     public CardData DragToSetCardData = null;
@@ -39,6 +39,7 @@ public class Card : Slot
     public Image RankImage;
     public Image SuitImage;
     public Image CardArtImage;
+    public RawImage SummoningSickness;
     public GameObject Cardback;
     public TextMeshProUGUI PowerToughnessText;
     public TextMeshProUGUI CardNameText;
@@ -158,6 +159,7 @@ public class Card : Slot
 
         return false;
     }
+    public bool EnteredThisTurn { get; private set; }
 
     // Positioning strategies
 	private ICardMotionStrategy m_currPosStrat;
@@ -223,6 +225,10 @@ public class Card : Slot
                 case CardType.UNIT:
                     gameObject.AddComponent<UnitTypeComponent>();
                     break;
+                case CardType.RITUAL:
+                    gameObject.AddComponent<RitualTypeComponent>();
+                    break;
+
             }
         }
 
@@ -232,6 +238,7 @@ public class Card : Slot
     public void UpdateCardDisplay()
 	{
         FloatingCard.gameObject.SetActive(!CurrentZone.CardsDisappear());
+        SummoningSickness.gameObject.SetActive(EnteredThisTurn && IsCardType(CardType.UNIT));
 
         if (TraceMode)
         {
@@ -258,7 +265,7 @@ public class Card : Slot
 
 		Cardback.gameObject.SetActive(false);
 
-		CardArtImage.enabled = true;
+		CardArtImage.enabled = (CardDataAsset.CardArt != null);
 		RankImage.enabled = true;
 		SuitImage.enabled = true;
 		CardNameText.enabled = true;
@@ -288,10 +295,17 @@ public class Card : Slot
 				break;
 		}
 
-        PowerToughnessText.text = CardDataAsset.Power + "/" + CardDataAsset.Toughness;
-		//CardNameText.text = CardDataAsset.CardName.ToUpper();
 		CardNameText.text = CardDataAsset.ShortName.ToUpper();
         RulesText.text = CardDataAsset.RulesText;
+        if (CardDataAsset.CenteredRules)
+        {
+            RulesText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            RulesText.verticalAlignment = VerticalAlignmentOptions.Top;
+        }
+        else
+        {
+            RulesText.alignment = TextAlignmentOptions.TopJustified;
+        }
 		gameObject.name = CardDataAsset.CardName + " " + gameObject.GetInstanceID();
 	}
 
@@ -401,4 +415,24 @@ public class Card : Slot
 		sfx.PlayPitched(clip);
 	}
 
+    public void OnEnterArena()
+    {
+        EnteredThisTurn = true;
+    }
+
+    public void ResetForTurn()
+    {
+        EnteredThisTurn = false;
+        UpdateCardDisplay();
+    }
+
+    public void Discard(float animLength = 0.001f)
+    {
+        Zone dest = null;
+        if (m_dealer.GameMode is BattleGameMode)
+        {
+            dest = m_dealer.Battle.DiscardZone;
+        }
+        CardDiscardAction action = new CardDiscardAction(this, dest, animLength);
+    }
 }

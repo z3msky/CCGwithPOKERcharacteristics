@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4323c6b8c9aff4ea7cf5c23ce6e1bc, type: 3}
   m_Name: SoundLibrary
   m_EditorClassIdentifier: 
-  SelectLow: {fileID: 8300000, guid: 8fa9e0c0e16b2574184fe2530d4ed582, type: 3}
+  SelectLow: {fileID: 8300000, guid: e189fdd95b1eaed4b89baf65fc177148, type: 3}
+  RejectSound: {fileID: 8300000, guid: 55f358e99049a7648a254ad1ddd5d440, type: 3}
+  DrawSound: {fileID: 8300000, guid: 8fa9e0c0e16b2574184fe2530d4ed582, type: 3}
+  CoinSound: {fileID: 8300000, guid: d04e864e9b761c74897e5c50c5343ba2, type: 3}
   AdvanceSound: {fileID: 8300000, guid: ab3faa9b93160924da974eb14ddb78f5, type: 3}
   DefaultAttackSound: {fileID: 8300000, guid: 72eeddbcc95011c43908c68c7806ce96, type: 3}
+  SelectForSummonSound: {fileID: 8300000, guid: 0d5cc86b46fc6704ea924cd20047a8c5, type: 3}
+  SummonSound: {fileID: 8300000, guid: 9f0c00ec752658e458f01a59aeaa1553, type: 3}

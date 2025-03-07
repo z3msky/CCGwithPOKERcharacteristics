@@ -13,6 +13,7 @@ public class CardData : ScriptableObject
 	public Sprite CardArt;
 	public CardType[] CardTypes;
 	public string RulesText;
+	public bool CenteredRules;
 
 	[Range(0, 13)]
 	public int Rank;
@@ -21,6 +22,14 @@ public class CardData : ScriptableObject
 	[Header("Unit")]
 	public int Power;
 	public int Toughness;
+
+	[Header("Ritual")]
+	public string RitualCostDesc;
+	Suit RitualSuits;
+	int[] RitualRanks;
+
+	[Header("Effect")]
+	public KeywordEffect[] Effects;
 
 
 	public string RankString

@@ -17,7 +17,7 @@ public class AttemptSummonState : GameModeState
 		m_summonCard = summonCard;
 	}
 
-	public override void SetupState()
+	override protected void SetupState()
 	{
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null, "Cannot attempt summon in non-battle game mode");
@@ -31,7 +31,7 @@ public class AttemptSummonState : GameModeState
 		}
 
 
-		GameObject cancelButtonObj = GameObject.Instantiate(m_battle.BlockerButtonPrefab, m_battle.m_dealer.UICanvas.transform);
+		GameObject cancelButtonObj = GameObject.Instantiate(m_battle.BlockerButtonPrefab, m_battle.dealer.UICanvas.transform);
 		m_cancelButton = cancelButtonObj.GetComponent<Button>();
 		Debug.Assert(m_cancelButton != null);
 
@@ -43,7 +43,7 @@ public class AttemptSummonState : GameModeState
 		{
 			m_battle.SummonSlot.GetComponent<Image>().color = m_defaultSlotColor;
 			m_gameMode.SetDialogueReadout("Select a zone to summon " + m_summonCard.CardName);
-			m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.SelectForSummonSound);
+			m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.SelectForSummonSound);
 		}
 		else
 		{
@@ -65,7 +65,7 @@ public class AttemptSummonState : GameModeState
 				m_gameMode.SetDialogueReadout("You can only summon a King to an empty zone if you control three units of the King's suit.");
 
 
-			m_battle.m_dealer.SFXManager.PlayPitched(m_battle.m_dealer.SFXManager.Library.RejectSound);
+			m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.RejectSound);
 		}
 	}
 
@@ -104,7 +104,7 @@ public class AttemptSummonState : GameModeState
 			if (traceSlot.CanAcceptAsSummon(m_summonCard))
 			{
 				validSlotExists = true;
-				GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.m_dealer.UICanvas.transform);
+				GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.dealer.UICanvas.transform);
 
 				selectorButton.transform.position = zone.transform.position;
 				selectorButton.transform.SetAsLastSibling();
@@ -132,7 +132,7 @@ public class AttemptSummonState : GameModeState
 
 	private void CancelSummon()
 	{
-		m_gameMode.m_dealer.Queue(new MoveCardAction(m_summonCard, m_battle.PlayerHand));
+		m_gameMode.dealer.Queue(new MoveCardAction(m_summonCard, m_battle.PlayerHand));
 		m_gameMode.SwapState(new PlayerNeutralState());
 	}
 }

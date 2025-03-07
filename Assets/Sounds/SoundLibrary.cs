@@ -6,9 +6,12 @@ public class SoundLibrary : ScriptableObject
 {
 
 
-	[Header("Menu")]
+	[Header("General")]
 	public AudioClip SelectLow;
 	public AudioClip RejectSound;
+	public AudioClip DrawSound;
+	public AudioClip CoinSound;
+
 	[Header("Combat")]
 	public AudioClip AdvanceSound;
 	public AudioClip DefaultAttackSound;

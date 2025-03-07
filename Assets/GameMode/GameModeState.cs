@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameModeState
 {
 	protected GameMode m_gameMode;
+	public bool Started = false;
 
 	virtual public GameModeState NextGameModePhase
 	{
@@ -19,7 +20,17 @@ public class GameModeState
 		m_gameMode = gameMode;
 	}
 
-	virtual public void SetupState()
+	public void Setup()
+	{
+		SetupState();
+		if (m_gameMode is BattleGameMode)
+		{
+			(m_gameMode as BattleGameMode)
+				.ProcessStateBasedEvents();
+		}
+	}
+
+	virtual protected void SetupState()
 	{
 
 	}
