@@ -30,7 +30,7 @@ public class TryAdvanceOrRetreatAction : DealerAction
         if (m_unit.CanAdvanceOrRetreat(MoveType.ADVANCE, out targetZone))
         {
             m_dealer.SFXManager.PlayPitched(m_dealer.SFXManager.Library.AdvanceSound);
-            m_dealer.InstantMoveCardToZone(m_unit.Card, targetZone);
+            m_dealer.LerpMoveCardToZone(m_unit.Card, targetZone);
         }
 	}
 

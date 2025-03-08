@@ -22,7 +22,7 @@ public class TryDrawOneAction : DealerAction
 
 		if (m_pile.Cards.Length > 0)
 		{
-			m_dealer.InstantMoveCardToZone(m_pile.CardFromTop(), m_target);
+			m_dealer.LerpMoveCardToZone(m_pile.CardFromTop(), m_target);
 			m_dealer.SFXManager.PlayPitched(m_dealer.SFXManager.Library.DrawSound);
 		}
 	}

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitTypeComponent : CardTypeComponent, IDamageable
+public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEvent
 {
 	public int Power;
 	public int Toughness;
@@ -178,16 +178,19 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable
 	public int Damage(int dmg)
 	{
 		DamageOnUnit += dmg;
-		if (DamageOnUnit >= Toughness)
-		{
-			Die();
-		}
+		Card.UpdateCardDisplay();
+		Card.PlayAnimation("Shake");
 		return DamageOnUnit - Toughness;
 	}
 
-	public void Die()
+	public void CheckStateBasedEvents()
 	{
-		Card.FloatingCard.gameObject.SetActive(false);
-		m_dealer.PushImmediateAction(new MoveCardAction(Card, m_battle.DiscardZone));
+		// Dies to damage
+		if (DamageOnUnit >= Toughness)
+		{
+			DamageOnUnit = 0;
+			Card.FloatingCard.gameObject.SetActive(true);
+			m_dealer.CutToNextInQueue(new MoveCardAction(Card, m_battle.DiscardZone, 0, true));
+		}
 	}
 }

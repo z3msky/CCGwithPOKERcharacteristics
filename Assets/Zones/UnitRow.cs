@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class UnitRow : Zone
 {
+	override protected void ZoneTypeStart()
+	{
+        for (int i = 0; i < Subzones.Count; i++)
+        {
+            Zone z = Subzones[i];
+            z.ZoneName = ZoneName + "-" + i.ToString();
+        }
+	}
 
 	override public bool CanAcceptAsTrace(Card card)
 	{

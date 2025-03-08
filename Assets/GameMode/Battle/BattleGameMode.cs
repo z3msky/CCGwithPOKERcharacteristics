@@ -115,6 +115,7 @@ public class BattleGameMode : GameMode
 
 	public void PlayerLose(PlayerEnemyCharacter player)
 	{
+		dealer.ClearAll();
 		if (player == PlayerRef)
 		{
 			Defeat();

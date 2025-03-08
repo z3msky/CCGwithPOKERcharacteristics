@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum KeywordEffect
 {
-	RANGED
+	Ranged, Evasive
 }

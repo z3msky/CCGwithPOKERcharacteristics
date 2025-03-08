@@ -350,6 +350,11 @@ public class Card : Slot, ITurnResettable
         transform.position = Vector2.Lerp(currPos, target, LerpRatio * Time.deltaTime);
     }
 
+    public void Teleport()
+    {
+        transform.position = TargetPosition;
+    }
+
 	public void Drag()
 	{
         if (!CurrentZone.PlayerCanDragCards) return;

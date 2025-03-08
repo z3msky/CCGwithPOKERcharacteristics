@@ -40,6 +40,8 @@ public class AttackZoneAction : DealerAction
 			return;
 		}
 
+		m_tgt.ResolveDamage(m_unit.Power);
+		m_unit.transform.SetAsLastSibling();
 		m_unit.Card.PlayAnimation(m_animname);
 	}
 
@@ -48,7 +50,7 @@ public class AttackZoneAction : DealerAction
 		Complete = m_unit.Card.AnimationComplete(m_animname);
 		if (Complete)
 		{
-			m_tgt.ResolveDamage(m_unit.Power);
+			IStateBasedEvent.TestAll();
 			m_unit.DeclaredAsAttacker = false;
 		}
 	}

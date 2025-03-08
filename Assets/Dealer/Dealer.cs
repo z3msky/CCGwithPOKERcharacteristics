@@ -21,28 +21,11 @@ public class Dealer : MonoBehaviour
     {
         get
         {
-            DealerAction val;
-
-            // Unless we're already working on a queued action,
-            bool success = m_queue.TryPeek(out val);
-            if (success && val.Started)
+            if (m_queue.Count > 0)
             {
-                return val;
+                return m_queue[0];
             }
 
-            // we will do immediate action if one exists,
-            success = m_immediateActions.TryPeek(out val);
-            if (success)
-            {
-                return val;
-            }
-
-            // then otherwise do a queued action if one exists,
-            success = m_queue.TryPeek(out val);
-            if (success)
-                return val;
-
-            // and if none of either exist we are idle
             return null;
         }
     }
@@ -68,8 +51,7 @@ public class Dealer : MonoBehaviour
         }
     }
 
-    private Stack<DealerAction> m_immediateActions;
-	private Queue<DealerAction> m_queue;
+	private List<DealerAction> m_queue;
 
     void Start()
     {
@@ -77,8 +59,7 @@ public class Dealer : MonoBehaviour
         GameMode = GetComponent<GameMode>();
         SFXManager = GetComponent<SFXManager>();
 
-        m_queue = new Queue<DealerAction>();
-        m_immediateActions = new Stack<DealerAction>();
+        m_queue = new List<DealerAction>();
 
         GameMode.GameSetup();
     }
@@ -105,16 +86,10 @@ public class Dealer : MonoBehaviour
             CurrentAction.Process();
         }
 
-		// If we completed an immediate action
-		if (m_immediateActions.Contains(CurrentAction) && CurrentAction.Complete)
-		{
-			m_immediateActions.Pop();
-		}
-
 		// If we completed a queued action
-		if (m_queue.Contains(CurrentAction) && CurrentAction.Complete)
+		if (CurrentAction.Complete)
         {
-            m_queue.Dequeue();
+            m_queue.Remove(CurrentAction);
             if (m_queue.Count == 0)
             {
                 OnQueueCompleted();
@@ -122,17 +97,41 @@ public class Dealer : MonoBehaviour
         }
     }
 
+    public void ClearAll()
+    {
+        if (m_queue.Count < 2)
+        {
+            return;
+        }
+
+        for (int i = 1; i < m_queue.Count; i++)
+        {
+            m_queue.RemoveAt(i);
+        }
+    }
     
     // Queueing actions blocks input until queue is done
     public void Queue(DealerAction action)
     {
-        m_queue.Enqueue(action);
+        m_queue.Add(action);
     }
 
     // Immediate actions will resolve immediately after the current action, LIFO
-    public void PushImmediateAction(DealerAction action)
+    public void CutToNextInQueue(DealerAction action)
     {
-        m_immediateActions.Push(action);
+        if (CurrentAction == null)
+        {
+            Queue(action);
+        }
+        else if (!CurrentAction.Started)
+        {
+            m_queue.Insert(0, action);
+        }
+        else
+        {
+            m_queue.Insert(1, action);
+        }
+
     }
 
 	// Dealer gets to update until queue is done
@@ -141,8 +140,9 @@ public class Dealer : MonoBehaviour
 	{
 	}
 
-	public void InstantMoveCardToZone(Card card, Zone dest)
+	public void LerpMoveCardToZone(Card card, Zone dest)
     {
+        card.transform.SetAsLastSibling();
         Zone src = card.CurrentZone;
         Debug.Assert(card != null);
         Debug.Assert(dest != null);
@@ -163,7 +163,13 @@ public class Dealer : MonoBehaviour
         dest.AddCard(card);
     }
 
-    public Card GenerateCard(CardData card, Zone dest)
+	public void InstantMoveCardToZone(Card card, Zone dest)
+	{
+        LerpMoveCardToZone(card, dest);
+        card.Teleport();
+	}
+
+	public Card GenerateCard(CardData card, Zone dest)
     {
 		Card result = GameObject.Instantiate(EmptyCardObject, CardCanvas.transform).GetComponent<Card>();
         result.transform.position = dest.transform.position;

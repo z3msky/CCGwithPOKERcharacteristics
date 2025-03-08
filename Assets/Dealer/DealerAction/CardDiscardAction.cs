@@ -31,7 +31,7 @@ public class CardDiscardAction : DealerAction
 
 		if (tNorm > 1)
 		{
-			m_dealer.PushImmediateAction(new MoveCardAction(m_card, m_dest, m_movTime));
+			m_dealer.CutToNextInQueue(new MoveCardAction(m_card, m_dest, m_movTime));
 			Complete = true;
 		}
 	}
