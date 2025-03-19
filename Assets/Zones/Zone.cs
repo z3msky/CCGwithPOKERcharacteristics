@@ -73,6 +73,7 @@ public class Zone : MonoBehaviour
 	private void Update()
 	{
 		ArrangeCards();
+		CheckTeleport();
 		ZoneTypeUpdate();
 	}
 
@@ -137,6 +138,18 @@ public class Zone : MonoBehaviour
 	{
 	}
 
+	private void CheckTeleport()
+	{
+		foreach (Card card in Cards)
+		{
+			if (card.ShouldTeleport)
+			{
+				card.transform.position = card.TargetPosition;
+				card.ShouldTeleport = false;
+			}
+		}
+	}
+
 	public void ListSubzones()
 	{
 		foreach (Zone zone in Subzones)
@@ -145,7 +158,7 @@ public class Zone : MonoBehaviour
 		}
 	}
 
-	virtual public void ResolveDamage(int dmg)
+	virtual public void ResolveDamage(int dmg, IDamageSource src)
 	{
 
 		if (Cards.Length > 0)
@@ -154,7 +167,7 @@ public class Zone : MonoBehaviour
 			IDamageable[] dmgables = Cards[0].GetComponents<IDamageable>();
 			foreach (IDamageable damageable in dmgables)
 			{
-				damageable.Damage(dmg);
+				damageable.Damage(dmg, src);
 			}
 		}
 		else

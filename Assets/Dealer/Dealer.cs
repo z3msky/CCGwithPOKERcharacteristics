@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 [RequireComponent(typeof(GameMode))]
@@ -9,6 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(SFXManager))]
 public class Dealer : MonoBehaviour
 {
+    public KeywordLibrary KeywordLibrary;
     public GameObject EmptyCardObject;
     public Zone RootZone;
     public Canvas MainCanvas;
@@ -72,6 +74,8 @@ public class Dealer : MonoBehaviour
             GameMode.UpdateGameMode();
             return;
         }
+
+        Battle.SetDialogueReadout("Dealer: " + m_queue.Count);
 
         // Setup if it's a new action
         if (!CurrentAction.Started)
@@ -159,14 +163,14 @@ public class Dealer : MonoBehaviour
             return;
         }
 
-        Debug.Log("Move [" + card.CardDataAsset.CardName + "] from [" + src.ZoneName + "] -> [" + dest.ZoneName + "]");
+        //Debug.Log("Move [" + card.CardDataAsset.CardName + "] from [" + src.ZoneName + "] -> [" + dest.ZoneName + "]");
         dest.AddCard(card);
     }
 
 	public void InstantMoveCardToZone(Card card, Zone dest)
 	{
         LerpMoveCardToZone(card, dest);
-        card.Teleport();
+        card.ShouldTeleport = true;
 	}
 
 	public Card GenerateCard(CardData card, Zone dest)
@@ -194,13 +198,33 @@ public class Dealer : MonoBehaviour
         {
 			CardData card = ScriptableObject.Instantiate(EmptyCard);
 
-               card.CardName = suit.ToString().ToLower() + " unit";
-               card.Rank = rank;
-               card.Suit = suit;
-               card.CardTypes = new CardType[1];
-               card.CardTypes[0] = CardType.UNIT;
-               card.Power = (rank/2)+2;
-               card.Toughness = (rank / 2) + 1;
+            card.CardName = suit.ToString().ToLower() + " unit";
+            card.Rank = rank;
+            card.Suit = suit;
+            card.CardTypes = new CardType[1];
+            card.CardTypes[0] = CardType.UNIT;
+            card.Power = (rank/2)+2;
+            card.Toughness = (rank / 2) + 1;
+
+            List<KeywordAbilityData> keywords = new List<KeywordAbilityData>();
+            if (Random.Range(0,5) == 1)
+            {
+                keywords.Add(KeywordLibrary.Find(Keyword.Ranged));
+                card.Toughness /= 3;
+            }
+            
+            if (Random.Range(0,6) == 1)
+			{
+				keywords.Add(KeywordLibrary.Find(Keyword.Treacherous));
+                card.Power = 1;
+                card.Toughness /= 2;
+			}
+
+            card.Toughness = Mathf.Clamp(card.Toughness, 1, 10);
+            card.Power = Mathf.Clamp(card.Power, 1, 10);
+
+			card.KeywordAbilities = keywords.ToArray();
+            keywords = new List<KeywordAbilityData>();
 
 			GenerateCard(card, dest);
 		}

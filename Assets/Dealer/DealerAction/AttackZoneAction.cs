@@ -40,7 +40,7 @@ public class AttackZoneAction : DealerAction
 			return;
 		}
 
-		m_tgt.ResolveDamage(m_unit.Power);
+		m_tgt.ResolveDamage(m_unit.Power, m_unit);
 		m_unit.transform.SetAsLastSibling();
 		m_unit.Card.PlayAnimation(m_animname);
 	}

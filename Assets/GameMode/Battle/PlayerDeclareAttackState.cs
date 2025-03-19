@@ -20,11 +20,11 @@ public class PlayerDeclareAttackState: GameModeState
 
 	override protected void SetupState()
 	{
+
+		Debug.Log("setup player atk");
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null);
 
-		m_selectorButtons = new List<Button>();
-		m_selectorBorders = new List<ZoneBorder>();
 		List<UnitTypeComponent> units = new List<UnitTypeComponent>();
 
 		foreach (Zone zone in m_battle.PlayerBackRow.Subzones)
@@ -51,6 +51,9 @@ public class PlayerDeclareAttackState: GameModeState
 			}
 		}
 
+		List<Button>  buttons = new List<Button>();
+		List<ZoneBorder> borders = new List<ZoneBorder>();
+
 		bool validAttackerExists = false;
 		foreach (UnitTypeComponent unit in units)
 		{
@@ -59,29 +62,33 @@ public class PlayerDeclareAttackState: GameModeState
 			{
 				if (unit.Card.EnteredThisTurn)
 					m_gameMode.SetDialogueReadout("Units cannot attack on the turn they enter.");
-				continue;
 			}
-
-			validAttackerExists = true;
-
-			GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.dealer.UICanvas.transform);
-			selectorButton.transform.position = zone.transform.position;
-			selectorButton.transform.SetAsLastSibling();
-			selectorButton.GetComponent<RectTransform>().sizeDelta = zone.GetComponent<RectTransform>().sizeDelta;
-			m_selectorButtons.Add(selectorButton.GetComponent<Button>());
-
-			ZoneBorder border = selectorButton.GetComponentInChildren<ZoneBorder>();
-			border.transform.SetParent(m_gameMode.dealer.DecorationCanvas.transform);
-			m_selectorBorders.Add(border);
-
-			selectorButton.GetComponent<Button>().onClick.AddListener(() =>
+			else
 			{
-				unit.DeclaredAsAttacker = !unit.DeclaredAsAttacker;
-				m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.SelectLow);
-			});
+				validAttackerExists = true;
 
-			unit.DeclaredAsAttacker = true;
+				GameObject selectorButton = GameObject.Instantiate(m_battle.SelectorButtonPrefab, m_gameMode.dealer.UICanvas.transform);
+				selectorButton.transform.position = zone.transform.position;
+				selectorButton.transform.SetAsLastSibling();
+				selectorButton.GetComponent<RectTransform>().sizeDelta = zone.GetComponent<RectTransform>().sizeDelta;
+				buttons.Add(selectorButton.GetComponent<Button>());
+
+				ZoneBorder border = selectorButton.GetComponentInChildren<ZoneBorder>();
+				border.transform.SetParent(m_gameMode.dealer.DecorationCanvas.transform);
+				borders.Add(border);
+
+				selectorButton.GetComponent<Button>().onClick.AddListener(() =>
+				{
+					unit.DeclaredAsAttacker = !unit.DeclaredAsAttacker;
+					m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.SelectLow);
+				});
+
+				unit.DeclaredAsAttacker = true;
+			}
 		}
+
+		m_selectorButtons = buttons;
+		m_selectorBorders = borders;
 
 		if (validAttackerExists)
 			m_gameMode.SetDialogueReadout("Your units will attack if able, but you may order them to hold off.");
@@ -94,14 +101,20 @@ public class PlayerDeclareAttackState: GameModeState
 
 	public override void EndState()
 	{
-		foreach (Button button in m_selectorButtons)
+		if (m_selectorButtons != null && m_selectorButtons.Count > 0)
 		{
-			GameObject.Destroy(button.gameObject);
+			foreach (Button button in m_selectorButtons)
+			{
+				GameObject.Destroy(button.gameObject);
+			}
 		}
 
-		foreach (ZoneBorder border in m_selectorBorders)
+		if (m_selectorBorders != null && m_selectorBorders.Count > 0)
 		{
-			GameObject.Destroy(border.gameObject);
+			foreach (ZoneBorder border in m_selectorBorders)
+			{
+				GameObject.Destroy(border.gameObject);
+			}
 		}
 	}
 

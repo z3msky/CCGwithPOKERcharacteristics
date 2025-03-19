@@ -38,6 +38,7 @@ public class MoveCardAction : DealerAction
 
 		if (m_instant)
 		{
+			Debug.Log("Instant");
 			m_dealer.InstantMoveCardToZone(m_card, m_dest);
 		}
         else

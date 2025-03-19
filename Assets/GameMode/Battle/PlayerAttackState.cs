@@ -52,7 +52,10 @@ public class PlayerAttackState: GameModeState
 			if (!unit.DeclaredAsAttacker)
 				continue;
 			
-			unit.QueueTryAdvanceOrRetreat();
+			if (!unit.Card.HasKeywordAbility(Keyword.Ranged))
+			{
+				unit.QueueTryAdvanceOrRetreat();
+			}
 			unit.QueueTryAttack(m_battle.EnemyRow);
 		}
 

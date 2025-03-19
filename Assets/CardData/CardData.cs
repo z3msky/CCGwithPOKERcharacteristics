@@ -29,7 +29,7 @@ public class CardData : ScriptableObject
 	int[] RitualRanks;
 
 	[Header("Effect")]
-	public KeywordEffect[] Effects;
+	public KeywordAbilityData[] KeywordAbilities;
 
 
 	public string RankString

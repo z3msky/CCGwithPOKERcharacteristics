@@ -17,7 +17,7 @@ public class EnemySummonState : GameModeState
 
 	override public void UpdateState()
 	{
-
+		Debug.Log("UpdateSummon");
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null, "Cannot attempt summon in non-battle game mode");
 		Debug.Assert(m_battle.RuntimeEnemyPlan != null, "Enemy has no plan");

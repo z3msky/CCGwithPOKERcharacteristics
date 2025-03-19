@@ -19,6 +19,36 @@ public class FieldSlot : Slot, ITurnResettable
 	public Vector3 AdvancePreviewDirection = new Vector3(0, 50, 0);
 	public float PreviewAdvanceRetreat = 0;
 
+	public bool HasCardInSlot
+	{
+		get
+		{
+			if (Cards.Length > 0)
+			{
+				Debug.Assert(Cards.Length == 1);
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	public Card CardInSlot
+	{
+		get
+		{
+			if (Cards.Length == 0)
+			{
+				return null;
+			}
+			else
+			{
+				Debug.Assert(Cards.Length == 1);
+				return Cards[0];
+			}
+		}
+	}
+
 	private List<Card> m_traces;
 	private Vector3 m_traceImageOffset;
 

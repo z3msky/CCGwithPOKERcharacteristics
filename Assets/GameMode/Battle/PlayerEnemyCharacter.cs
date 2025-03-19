@@ -36,7 +36,7 @@ public class PlayerEnemyCharacter : MonoBehaviour, IDamageable
         LifeCountText.text = Life.ToString();
     }
 
-    public int Damage(int dmg)
+    public int Damage(int dmg, IDamageSource src = null)
     {
         Life -= dmg;
 

@@ -20,7 +20,6 @@ public class CardDiscardAction : DealerAction
 
 	override protected void SetupAction()
 	{
-		Debug.Assert(m_card != null);
 
 	}
 

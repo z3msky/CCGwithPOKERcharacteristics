@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501c8316a8709c54298baa5adef16a21, type: 3}
+  m_Name: Ranged
+  m_EditorClassIdentifier: 
+  Keyword: 1
+  ExplainerText: A ranged unit attacks from two spaces away
+  IconSprite: {fileID: -103637096, guid: ef87fc396a068c345807de21982e61fe, type: 3}
