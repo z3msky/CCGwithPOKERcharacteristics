@@ -51,15 +51,8 @@ public class PlayerAttackState: GameModeState
 		{
 			if (!unit.DeclaredAsAttacker)
 				continue;
-			
-			if (!unit.Card.HasKeywordAbility(Keyword.Ranged))
-			{
-				unit.QueueTryAdvanceOrRetreat();
-			}
 			unit.QueueTryAttack(m_battle.EnemyRow);
 		}
-
-		Debug.Log("PA setup");
 	}
 
 	override public void UpdateState()

@@ -173,7 +173,7 @@ public class Dealer : MonoBehaviour
         card.ShouldTeleport = true;
 	}
 
-	public Card GenerateCard(CardData card, Zone dest)
+	public Card GenerateCard(CardData card, Zone dest, PlayerEnemyCharacter controller = null)
     {
 		Card result = GameObject.Instantiate(EmptyCardObject, CardCanvas.transform).GetComponent<Card>();
         result.transform.position = dest.transform.position;
@@ -184,15 +184,15 @@ public class Dealer : MonoBehaviour
         return result;
 	}
 
-    public void GenerateDeck(CardList cards, Pile dest)
+    public void GenerateDeck(CardList cards, Pile dest, PlayerEnemyCharacter controller = null)
     {
         foreach (CardData card in cards.Cards)
         {
-            GenerateCard(card, dest);
+            GenerateCard(card, dest, controller);
         }
     }
 
-	public void GenerateDefaultDeck(Pile dest, Suit suit)
+	public void GenerateDefaultDeck(Pile dest, Suit suit, PlayerEnemyCharacter controller = null)
 	{
         for (int rank = 1; rank <= 13; rank++)
         {
@@ -232,6 +232,7 @@ public class Dealer : MonoBehaviour
 
 	public RuntimeEnemyPlan GenerateDefaultPlan(Suit suit)
 	{
+
         EnemyMove[] moves = new EnemyMove[13];
 
 		for (int rank = 1; rank <= 13; rank++)

@@ -1144,7 +1144,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343261296}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1653,7 +1653,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2651,11 +2651,11 @@ RectTransform:
   - {fileID: 1114694384}
   m_Father: {fileID: 1270428535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 740.21, y: -380.38748}
-  m_SizeDelta: {x: -1511.6, y: -742.7836}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -15.589844, y: -8.995605}
+  m_SizeDelta: {x: 408.40002, y: 337.21637}
+  m_Pivot: {x: 1, y: 0}
 --- !u!114 &638104686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6237,6 +6237,7 @@ MonoBehaviour:
   PlayerBackRow: {fileID: 1807280833}
   PlayerFrontRow: {fileID: 2038157838}
   EnemyRow: {fileID: 497795122}
+  EnemyIntentRow: {fileID: 1659188213}
   EnemyGenerateSlot: {fileID: 343261298}
   SummonSlot: {fileID: 658829152}
   DiscardZone: {fileID: 1371262516}
@@ -6585,7 +6586,7 @@ GameObject:
   - component: {fileID: 1659188215}
   - component: {fileID: 1659188213}
   m_Layer: 6
-  m_Name: EnemyIntentionRow
+  m_Name: EnemyIntentRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7560,6 +7561,10 @@ PrefabInstance:
     - target: {fileID: 3521498803949329193, guid: 36ecf2beb1b647143b0b16483945d098, type: 3}
       propertyPath: m_Color.g
       value: 0.5741988
+      objectReference: {fileID: 0}
+    - target: {fileID: 4743803365694382726, guid: 36ecf2beb1b647143b0b16483945d098, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5313339960080941681, guid: 36ecf2beb1b647143b0b16483945d098, type: 3}
       propertyPath: m_Pivot.x

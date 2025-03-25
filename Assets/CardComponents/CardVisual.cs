@@ -19,6 +19,7 @@ public class CardVisual : MonoBehaviour
 	public TextMeshProUGUI CardNameText;
 	public TextMeshProUGUI RulesText;
 	public Image AbilityPanel;
+	public GameObject AdvRetButtonPanel;
 
 	[Header("Prefab")]
 	public GameObject KeywordIconPrefab;
@@ -50,9 +51,10 @@ public class CardVisual : MonoBehaviour
 			RankImage.gameObject.SetActive(true);
 			SuitImage.gameObject.SetActive(true);
 			CardNameText.gameObject.SetActive(true);
-			PowerToughnessText.gameObject.SetActive(false);
 			RulesText.gameObject.SetActive(true);
 			AbilityPanel.gameObject.SetActive(true);
+			AdvRetButtonPanel.gameObject.SetActive(false);
+			PowerToughnessText.gameObject.SetActive(false);
 		}
 		else
 		{
@@ -64,6 +66,7 @@ public class CardVisual : MonoBehaviour
 			CardNameText.gameObject.SetActive(false);
 			PowerToughnessText.gameObject.SetActive(false);
 			RulesText.gameObject.SetActive(false);
+			AdvRetButtonPanel.gameObject.SetActive(false);
 			AbilityPanel.gameObject.SetActive(false);
 
 			return; // just leave if hidden
@@ -157,6 +160,14 @@ public class CardVisual : MonoBehaviour
 		else
 		{
 			RulesText.alpha = 0;
+		}
+	}
+
+	public static void UpdateAll()
+	{
+		foreach (CardVisual v in FindObjectsByType<CardVisual>(FindObjectsSortMode.None))
+		{
+			v.UpdateCardDisplay();
 		}
 	}
 }

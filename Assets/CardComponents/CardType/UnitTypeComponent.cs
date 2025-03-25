@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEvent, IDamageSource
+public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEvent, IDamageSource, ITurnResettable
 {
 	public int Power;
 	public int Toughness;
 	public int DamageOnUnit;
 	public bool MarkedForDeath;
+	public bool HasAdvRetThisTurn;
 	public bool DeclaredAsAttacker = false;
 	public Vector3 PreviewAdvanceDir = new Vector3(0, 40, 0);
 	public Vector3 AdvanceRetreatPreviewOffset { get; private set; }
@@ -82,9 +83,39 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 		cv.SuitImage.gameObject.SetActive(true);
 		cv.PowerToughnessText.gameObject.SetActive(true);
 		cv.CardNameText.gameObject.SetActive(true);
+
+		UpdateAdvRetButtons(cv);
 	}
 
-	public void QueueTryAdvanceOrRetreat(MoveType moveType = MoveType.ADVANCE)
+	public void UpdateAdvRetButtons(CardVisual cv)
+	{
+		m_dealer = FindAnyObjectByType<Dealer>();
+		m_battle = m_dealer.GameMode as BattleGameMode;
+		Debug.Assert(m_dealer != null);
+		Debug.Assert(m_battle != null);
+
+		if (Card.IsInPlay
+			&& m_battle.CurrentState != null
+			&& m_battle.CurrentState is PlayerNeutralState
+			&& !HasAdvRetThisTurn
+			&& !Card.EnteredThisTurn
+			&& Card.Controller == CharacterType.Player)
+		{
+			cv.AdvRetButtonPanel.gameObject.SetActive(true);
+
+			AdvRetButton[] buttons = cv.AdvRetButtonPanel.GetComponentsInChildren<AdvRetButton>();
+			foreach (AdvRetButton button in buttons)
+			{
+				button.UpdateInteractability(this);
+			}
+		}
+		else
+		{
+			cv.AdvRetButtonPanel.gameObject.SetActive(false);
+		}
+	}
+
+	public void QueueTryAdvanceOrRetreat(AdvRetType moveType = AdvRetType.ADVANCE)
 	{
 		Debug.Assert(m_dealer != null);
 		Debug.Assert(m_battle != null);
@@ -95,6 +126,13 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 			int i = zone.transform.GetSiblingIndex();
 			m_dealer.Queue(new TryAdvanceOrRetreatAction(moveType, this, 0.5f));
 		}
+
+		if (m_battle.PlayerFrontRow.Subzones.Contains(zone))
+		{
+			int i = zone.transform.GetSiblingIndex();
+			m_dealer.Queue(new TryAdvanceOrRetreatAction(moveType, this, 0.5f));
+		}
+
 	}
 
 	public void QueueTryAttack(UnitRow row, string animName = "Attack")
@@ -111,12 +149,8 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 
 	public bool CanAttack()
 	{
-		if (Card.EnteredThisTurn)
-			return false;
 
-		Zone trash;
-		if (CanAdvanceOrRetreat(MoveType.ADVANCE, out trash)
-			|| CurrentRow == m_dealer.Battle.PlayerFrontRow
+		if (CurrentRow == m_dealer.Battle.PlayerFrontRow
 			|| (CurrentRow == m_dealer.Battle.PlayerBackRow && Card.HasKeywordAbility(Keyword.Ranged)))
 		{
 			return true;
@@ -133,11 +167,11 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 		//Debug.Log("I am in " + Card.CurrentZone.ZoneName + " attacking " + target.ZoneName);
 		Zone attackerZone = Card.CurrentZone;
 
-		// Summoning sickness
-		if (Card.EnteredThisTurn)
-		{
-			return false;
-		}
+		//// Summoning sickness
+		//if (Card.EnteredThisTurn)
+		//{
+		//	return false;
+		//}
 
 		// I am a player unit
 		if (m_battle.PlayerFrontRow.Subzones.Contains(attackerZone)
@@ -153,18 +187,30 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 		return false;
 	}
 
-	static private Zone trash;
-	public bool CanAdvanceOrRetreat(MoveType moveType, out Zone targetZone)
+	public bool CanAdvanceOrRetreat(AdvRetType moveType)
+	{
+		Zone z;
+		return CanAdvanceOrRetreat(moveType, out z);
+	}
+	public bool CanAdvanceOrRetreat(AdvRetType moveType, out Zone targetZone)
 	{
 		Debug.Assert(m_dealer != null);
 		Debug.Assert(m_battle != null);
+
+		if (Card.EnteredThisTurn || HasAdvRetThisTurn)
+		{
+			targetZone = null;
+			return false;
+		}
 
 		Zone currZone = Card.CurrentZone;
 		int i = currZone.transform.GetSiblingIndex();
 		Zone advZone = m_battle.PlayerFrontRow.Subzones[i];
 		Zone retZone = m_battle.PlayerBackRow.Subzones[i];
+		Zone enemyZone = m_battle.EnemyRow.Subzones[i];
 
-		if (moveType == MoveType.ADVANCE
+		// Unit can advance: front to back
+		if (moveType == AdvRetType.ADVANCE
 			&& m_battle.PlayerBackRow.Subzones.Contains(currZone)
 			&& advZone.Cards.Length == 0)
 		{
@@ -172,11 +218,22 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 			return true;
 		}
 
-		if (moveType == MoveType.RETREAT
+
+		// Unit can retreat: back to front
+		if (moveType == AdvRetType.RETREAT
 			&& m_battle.PlayerFrontRow.Subzones.Contains(currZone)
 			&& retZone.Cards.Length == 0)
 		{
-			targetZone = advZone;
+			targetZone = retZone;
+			return true;
+		}
+
+		// Unit can manifest: enemy intent to enemy row
+		if (moveType == AdvRetType.ADVANCE
+			&& m_battle.EnemyIntentRow.Subzones.Contains(currZone)
+			&& enemyZone.Cards.Length == 0)
+		{
+			targetZone = enemyZone;
 			return true;
 		}
 
@@ -207,5 +264,11 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 
 	public void CheckStateBasedEvents()
 	{
+	}
+
+	public void ResetForTurn()
+	{
+		HasAdvRetThisTurn = false;
+		Card.UpdateCardDisplay();
 	}
 }

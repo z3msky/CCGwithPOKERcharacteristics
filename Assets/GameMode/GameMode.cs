@@ -33,6 +33,14 @@ public class GameMode : MonoBehaviour
 	}
 
 	private GameModeState m_state;
+	public GameModeState CurrentState
+	{
+		get { return m_state; }
+		private set
+		{
+			m_state = value;
+		}
+	}
 
 	virtual public void GameSetup()
 	{
@@ -71,6 +79,8 @@ public class GameMode : MonoBehaviour
 			Debug.Assert(m_state.NextGameModePhase != null);
 			NextPhaseButton.gameObject.SetActive(true);
 			NextPhaseButton.GetComponentInChildren<TextMeshProUGUI>().text = buttonLabel;
+			NextPhaseButton.interactable = true;
+			NextPhaseButton.enabled = true;
 			NextPhaseButton.onClick.RemoveAllListeners();
 			NextPhaseButton.onClick.AddListener(() => SwapState(m_state.NextGameModePhase));
 		}
@@ -80,6 +90,7 @@ public class GameMode : MonoBehaviour
 		}
 
 		m_state.Started = false;
+		CardVisual.UpdateAll();
 	}
 
 	public void SetDialogueReadout(string text)

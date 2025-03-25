@@ -121,6 +121,29 @@ public class Card : Slot, ITurnResettable
         }
     }
     public bool TraceMode { get; set; }
+    public bool IsInPlay
+    {
+        get
+        {
+            Debug.Assert(CurrentZone != null);
+            Debug.Assert(CurrentZone.transform.parent != null);
+
+            return CurrentZone.transform.parent.GetComponent<UnitRow>() != null;
+        }
+    }
+
+    public CharacterType Controller
+    {
+        get
+        {
+            if (m_dealer.Battle.EnemyRow.Subzones.Contains(CurrentZone))
+            {
+                return CharacterType.Enemy;
+            }
+            else
+                return CharacterType.Player;
+        }
+    }
 
     public bool CanBePlayedAsCard
     {
@@ -273,7 +296,6 @@ public class Card : Slot, ITurnResettable
         Debug.Assert(GetComponent<CardVisual>() != null);
 		GetComponent<CardVisual>().UpdateCardDisplay();
 	}
-
 
 	public void UpdateCardRotation()
     {

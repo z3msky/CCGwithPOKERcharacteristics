@@ -5,17 +5,17 @@ using static UnityEngine.AudioSettings;
 using static UnityEngine.GraphicsBuffer;
 
 
-public enum MoveType
+public enum AdvRetType
 {
     ADVANCE, RETREAT
 }
 
 public class TryAdvanceOrRetreatAction : DealerAction
 {
-    private MoveType m_type;
+    private AdvRetType m_type;
     private UnitTypeComponent m_unit;
 
-    public TryAdvanceOrRetreatAction(MoveType type, UnitTypeComponent unit, float time = 0.3f)
+    public TryAdvanceOrRetreatAction(AdvRetType type, UnitTypeComponent unit, float time = 0.3f)
         : base(time)
     {
         m_type = type;
@@ -27,11 +27,15 @@ public class TryAdvanceOrRetreatAction : DealerAction
 		Debug.Assert(m_unit != null);
 
         Zone targetZone;
-        if (m_unit.CanAdvanceOrRetreat(MoveType.ADVANCE, out targetZone))
+
+        if (m_unit.CanAdvanceOrRetreat(m_type, out targetZone))
         {
             m_dealer.SFXManager.PlayPitched(m_dealer.SFXManager.Library.AdvanceSound);
             m_dealer.LerpMoveCardToZone(m_unit.Card, targetZone);
+            m_unit.HasAdvRetThisTurn = true;
         }
+
+        m_unit.Card.UpdateCardDisplay();
 	}
 
 }

@@ -32,7 +32,7 @@ public class EnemySummonState : GameModeState
 		}
 
 		List<FieldSlot> validSlots = new List<FieldSlot>();
-		foreach (Zone z in m_battle.EnemyRow.Subzones)
+		foreach (Zone z in m_battle.EnemyIntentRow.Subzones)
 		{
 			Debug.Assert(z is FieldSlot);
 			if (z.Cards.Length == 0)
@@ -54,7 +54,7 @@ public class EnemySummonState : GameModeState
 			}
 		}
 
-		m_battle.SwapState(new EnemyAttackState());
+		m_battle.SwapState(new EnemyAdvanceState());
 	}
 
 	public override void EndState()

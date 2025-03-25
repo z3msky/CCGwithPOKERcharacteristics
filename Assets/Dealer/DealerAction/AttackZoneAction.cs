@@ -30,7 +30,6 @@ public class AttackZoneAction : DealerAction
 
 	override protected void SetupAction()
 	{
-
 		// End if attack is invalid
 		if (!m_unit.CanAttackZone(m_tgt))
 		{

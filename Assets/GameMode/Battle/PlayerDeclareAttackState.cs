@@ -21,7 +21,7 @@ public class PlayerDeclareAttackState: GameModeState
 	override protected void SetupState()
 	{
 
-		Debug.Log("setup player atk");
+		//Debug.Log("setup player atk");
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null);
 
@@ -61,7 +61,7 @@ public class PlayerDeclareAttackState: GameModeState
 			if (!unit.CanAttack())
 			{
 				if (unit.Card.EnteredThisTurn)
-					m_gameMode.SetDialogueReadout("Units cannot attack on the turn they enter.");
+					m_gameMode.SetDialogueReadout("You control no units that can currently attack.");
 			}
 			else
 			{

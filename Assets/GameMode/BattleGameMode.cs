@@ -21,6 +21,7 @@ public class BattleGameMode : GameMode
 	public UnitRow PlayerBackRow;
 	public UnitRow PlayerFrontRow;
 	public UnitRow EnemyRow;
+	public UnitRow EnemyIntentRow;
 	public Slot EnemyGenerateSlot;
 	public SelectionSlot SummonSlot;
 	public Zone DiscardZone;
@@ -43,8 +44,8 @@ public class BattleGameMode : GameMode
 		SetZoneOwners();
 
 		//dealer.GenerateDeck(PlayerDecklist, PlayerDeck);
-		dealer.GenerateDefaultDeck(PlayerDeck, Suit.HEARTS);
-		dealer.GenerateDefaultDeck(PlayerDeck, Suit.SPADES);
+		dealer.GenerateDefaultDeck(PlayerDeck, Suit.HEARTS, PlayerRef);
+		dealer.GenerateDefaultDeck(PlayerDeck, Suit.SPADES, PlayerRef);
 		PlayerDeck.Shuffle();
 
 		//StartNextTurn();

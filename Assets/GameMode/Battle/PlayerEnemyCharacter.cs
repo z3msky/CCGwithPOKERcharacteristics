@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum CharacterType
+{
+    Enemy,
+    Player
+}
 public class PlayerEnemyCharacter : MonoBehaviour, IDamageable
 {
     [Header("Refs")]
