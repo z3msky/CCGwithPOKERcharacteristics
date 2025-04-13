@@ -287,20 +287,6 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "59c2526bf5804d0098b2059bf9cc7adb"
-                },
-                "m_SlotId": 3
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "61229a3c491c4634be9e7a580b67afd2"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
                     "m_Id": "5c81013a592246419cf0f987da4d2edd"
                 },
                 "m_SlotId": 0
@@ -532,6 +518,20 @@
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "59c2526bf5804d0098b2059bf9cc7adb"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "bb16b3fcfed145ec912bd5ce4fd63a12"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "61229a3c491c4634be9e7a580b67afd2"
                 },
                 "m_SlotId": 0
             }
@@ -2985,7 +2985,7 @@
     "m_ShaderOutputName": "B",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 30.0,
+        "e00": 24.0,
         "e01": 2.0,
         "e02": 2.0,
         "e03": 2.0,
@@ -3678,7 +3678,7 @@
     "m_ShaderOutputName": "B",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 3.0,
+        "e00": 2.0,
         "e01": 2.0,
         "e02": 2.0,
         "e03": 2.0,
@@ -3724,9 +3724,9 @@
     },
     "m_AllowMaterialOverride": true,
     "m_SurfaceType": 1,
-    "m_ZWriteControl": 0,
+    "m_ZWriteControl": 2,
     "m_ZTestMode": 8,
-    "m_AlphaMode": 0,
+    "m_AlphaMode": 1,
     "m_RenderFace": 2,
     "m_AlphaClip": true,
     "m_CustomEditorGUI": ""
@@ -4345,7 +4345,7 @@
     "m_ShaderOutputName": "OutMinMax",
     "m_StageCapability": 3,
     "m_Value": {
-        "x": 0.4000000059604645,
+        "x": 0.05000000074505806,
         "y": 0.8999999761581421
     },
     "m_DefaultValue": {
@@ -4721,7 +4721,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "AlphaClipThreshold",
     "m_StageCapability": 2,
-    "m_Value": 0.6000000238418579,
+    "m_Value": 0.30000001192092898,
     "m_DefaultValue": 0.5,
     "m_Labels": []
 }
@@ -5107,9 +5107,9 @@
     "m_ShaderOutputName": "BaseColor",
     "m_StageCapability": 2,
     "m_Value": {
-        "x": 0.13279913365840913,
-        "y": 0.11764322966337204,
-        "z": 0.15471690893173219
+        "x": 1.0,
+        "y": 0.9690925478935242,
+        "z": 0.9188679456710815
     },
     "m_DefaultValue": {
         "x": 0.0,

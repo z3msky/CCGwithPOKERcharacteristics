@@ -38,11 +38,12 @@ public class AttemptSummonState : GameModeState
 		m_cancelButton.onClick.AddListener(() => CancelSummon());
 
 		bool validSlotExists = CreateSelectorButtons();
+		DealerSpeak dealerSpeak = DealerSpeak.SceneInstance;
 
 		if (validSlotExists)
 		{
 			m_battle.SummonSlot.GetComponent<Image>().color = m_defaultSlotColor;
-			m_gameMode.SetDialogueReadout("Select a zone to summon " + m_summonCard.CardName);
+			dealerSpeak.SetDialogue("Select a zone to summon " + m_summonCard.CardName);
 			m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.SelectForSummonSound);
 		}
 		else
@@ -54,15 +55,15 @@ public class AttemptSummonState : GameModeState
 			}
 
 			if (m_summonCard.IsNumber)
-				m_gameMode.SetDialogueReadout("You can only summon a Numbered card to a zone with total pips greater than or equal to its rank.");
+				dealerSpeak.SetDialogue("You can only summon a Numbered card to a zone with total pips greater than or equal to its rank.");
 			else if (m_summonCard.IsAce)
-				m_gameMode.SetDialogueReadout("You can only summon an Ace to an empty zone");
+				dealerSpeak.SetDialogue("You can only summon an Ace to an empty zone");
 			else if (m_summonCard.Rank == 11)
-				m_gameMode.SetDialogueReadout("You can only summon a Jack to an empty zone if you control a unit of the Jack's suit.");
+				dealerSpeak.SetDialogue("You can only summon a Jack to an empty zone if you control a unit of the Jack's suit.");
 			else if (m_summonCard.Rank == 12)
-				m_gameMode.SetDialogueReadout("You can only summon a Queen to an empty zone if you control two units of the Queen's suit.");
+				dealerSpeak.SetDialogue("You can only summon a Queen to an empty zone if you control two units of the Queen's suit.");
 			else if (m_summonCard.Rank == 13)
-				m_gameMode.SetDialogueReadout("You can only summon a King to an empty zone if you control three units of the King's suit.");
+				dealerSpeak.SetDialogue("You can only summon a King to an empty zone if you control three units of the King's suit.");
 
 
 			m_battle.dealer.SFXManager.PlayPitched(m_battle.dealer.SFXManager.Library.RejectSound);

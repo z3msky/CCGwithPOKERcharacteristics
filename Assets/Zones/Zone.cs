@@ -45,10 +45,13 @@ public class Zone : MonoBehaviour
         } 
     }
 	public PlayerEnemyCharacter ZoneOwner { get; set; }
+	public Color HighlightColor { get; set; }
 
 	protected Canvas CardCanvasRef;
 	protected Dealer DealerRef;
 	protected GameMode GameModeRef;
+
+	private Color m_defaultBorderColor;
 
 	private void Start()
 	{
@@ -66,15 +69,30 @@ public class Zone : MonoBehaviour
 		GameModeRef = DealerRef.GetComponent<GameMode>();
 		Debug.Assert(GameModeRef != null);
 
+		ZoneBorder border = GetComponentInChildren<ZoneBorder>();
+		if (border != null)
+			m_defaultBorderColor = border.DefaultColor;
+		HighlightColor = m_defaultBorderColor;
+
 		gameObject.name = ZoneName;
 
 		ZoneTypeStart();
 	}
+
 	private void Update()
 	{
 		ArrangeCards();
 		CheckTeleport();
 		ZoneTypeUpdate();
+	}
+
+	private void LateUpdate()
+	{
+		ZoneBorder border = GetComponentInChildren<ZoneBorder>();
+		if (border != null)
+			border.DefaultColor = HighlightColor;
+		HighlightColor = m_defaultBorderColor;
+
 	}
 
 	public void Shuffle()

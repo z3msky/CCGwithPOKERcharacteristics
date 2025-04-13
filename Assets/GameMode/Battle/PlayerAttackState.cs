@@ -57,7 +57,6 @@ public class PlayerAttackState: GameModeState
 
 	override public void UpdateState()
 	{
-		m_gameMode.SetDialogueReadout("");
 		m_gameMode.SwapState(new EnemySummonState());
 	}
 

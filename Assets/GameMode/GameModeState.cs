@@ -22,6 +22,7 @@ public class GameModeState
 
 	public void Setup()
 	{
+		//DealerSpeak.SceneInstance.ClearDialogue();
 		SetupState();
 		if (m_gameMode is BattleGameMode)
 		{

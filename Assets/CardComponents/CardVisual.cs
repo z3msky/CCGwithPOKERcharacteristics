@@ -13,6 +13,7 @@ public class CardVisual : MonoBehaviour
 	public Image RankImage;
 	public Image SuitImage;
 	public Image CardArtImage;
+	public Image CardLightenerImage;
 	public RawImage SummoningSickness;
 	public GameObject Cardback;
 	public TextMeshProUGUI PowerToughnessText;
@@ -31,20 +32,17 @@ public class CardVisual : MonoBehaviour
 		card = GetComponent<Card>();
 
 		FloatingCard.gameObject.SetActive(!card.CurrentZone.CardsDisappear());
-		SummoningSickness.gameObject.SetActive(card.EnteredThisTurn && card.IsCardType(CardType.UNIT));
+		SummoningSickness.gameObject.SetActive(
+			card.EnteredThisTurn
+			&& !card.IntentMode
+			&& card.IsCardType(CardType.UNIT));
 
-		if (card.TraceMode)
-		{
-			FloatingCard.color = card.TraceCardColor;
-		}
-		else
-		{
-			FloatingCard.color = card.NormalCardColor;
-		}
+
+		RulesText.text = card.FullRulesText;
+		SetupAbilityPanel();
 
 		if (card.Revealed)
 		{
-
 			Cardback.gameObject.SetActive(false);
 
 			CardArtImage.gameObject.SetActive((card.CardDataAsset.CardArt != null));
@@ -55,6 +53,23 @@ public class CardVisual : MonoBehaviour
 			AbilityPanel.gameObject.SetActive(true);
 			AdvRetButtonPanel.gameObject.SetActive(false);
 			PowerToughnessText.gameObject.SetActive(false);
+			CardLightenerImage.gameObject.SetActive(true);
+
+			FloatingCard.color = card.NormalCardColor;
+			RankImage.color = Color.black;
+			PowerToughnessText.color = Color.black;
+
+			if (card.TraceMode)
+			{
+				FloatingCard.color = card.TraceCardColor;
+			}
+			else if (card.IntentMode)
+			{
+				CardLightenerImage.gameObject.SetActive(false);
+				FloatingCard.color = card.IntentCardColor;
+				RankImage.color = Color.gray;
+				PowerToughnessText.color = Color.white;
+			}
 		}
 		else
 		{
@@ -96,7 +111,6 @@ public class CardVisual : MonoBehaviour
 		}
 
 		CardNameText.text = card.ShortName.ToUpper();
-		RulesText.text = card.FullRulesText;
 		if (card.CardDataAsset.CenteredRules)
 		{
 			RulesText.horizontalAlignment = HorizontalAlignmentOptions.Center;
@@ -104,10 +118,9 @@ public class CardVisual : MonoBehaviour
 		}
 		else
 		{
-			RulesText.alignment = TextAlignmentOptions.TopJustified;
+			RulesText.alignment = TextAlignmentOptions.TopLeft;
 		}
 
-		SetupAbilityPanel();
 
 		gameObject.name = card.CardName + " " + gameObject.GetInstanceID();
 	}

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class ZoneBorder : MonoBehaviour
 {
     public Color DefaultColor;
-    public Color HighlightColor;
     public Image[] Images;
 
     private Color m_oldDefault;
@@ -27,15 +26,6 @@ public class ZoneBorder : MonoBehaviour
             m_oldDefault = DefaultColor;
         }
     }
-
-    public void Highlight()
-    {
-        SetColor(HighlightColor);
-    }
-	public void UnHighlight()
-	{
-		SetColor(DefaultColor);
-	}
 
 	public void SetColor(Color color)
     {

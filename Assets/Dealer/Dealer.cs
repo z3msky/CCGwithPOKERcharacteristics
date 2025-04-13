@@ -75,8 +75,6 @@ public class Dealer : MonoBehaviour
             return;
         }
 
-        Battle.SetDialogueReadout("Dealer: " + m_queue.Count);
-
         // Setup if it's a new action
         if (!CurrentAction.Started)
         {
@@ -194,11 +192,11 @@ public class Dealer : MonoBehaviour
 
 	public void GenerateDefaultDeck(Pile dest, Suit suit, PlayerEnemyCharacter controller = null)
 	{
-        for (int rank = 1; rank <= 13; rank++)
+        for (int rank = 1; rank <= 8; rank++)
         {
 			CardData card = ScriptableObject.Instantiate(EmptyCard);
 
-            card.CardName = suit.ToString().ToLower() + " unit";
+            card.CardName =  rank.ToString() + " of " + suit.ToString().ToLower();
             card.Rank = rank;
             card.Suit = suit;
             card.CardTypes = new CardType[1];
@@ -232,10 +230,10 @@ public class Dealer : MonoBehaviour
 
 	public RuntimeEnemyPlan GenerateDefaultPlan(Suit suit)
 	{
+        int ranknum = 10;
+        EnemyMove[] moves = new EnemyMove[ranknum];
 
-        EnemyMove[] moves = new EnemyMove[13];
-
-		for (int rank = 1; rank <= 13; rank++)
+		for (int rank = 1; rank <= ranknum; rank++)
 		{
 			CardData card = ScriptableObject.Instantiate(EmptyCard);
 
@@ -247,7 +245,16 @@ public class Dealer : MonoBehaviour
 			card.Power = (rank / 2) + 2;
 			card.Toughness = (rank / 2) + 1;
 
-            int turn = Random.Range(0, 15);
+            int turn;
+			if (rank % 2 == 1)
+            {
+                turn = rank / 2;
+            }
+            else
+            {
+                turn = Random.Range(rank, 7);
+                //turn = Random.Range(1, 1);
+            }
             moves[rank - 1] = new EnemyMove(card, turn);
 		}
 

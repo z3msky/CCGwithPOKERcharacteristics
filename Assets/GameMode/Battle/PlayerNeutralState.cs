@@ -20,7 +20,7 @@ public class PlayerNeutralState: GameModeState
 
 	override public void UpdateState()
 	{
-		m_gameMode.SetDialogueReadout("It's your move");
+		DealerSpeak.SceneInstance.SetDialogue("It's your move");
 	}
 
 	override public bool PlayerCanDrag()

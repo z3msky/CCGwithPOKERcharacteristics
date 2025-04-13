@@ -66,15 +66,16 @@ public class UnitTypeComponent : CardTypeComponent, IDamageable, IStateBasedEven
 
 	private void UpdatePT()
 	{
-		Card.GetComponent<CardVisual>().PowerToughnessText.text = Power + "/" + (Toughness - DamageOnUnit);
+		string open = "";
+		string close = "";
+
 		if (DamageOnUnit > 0)
 		{
-			Card.GetComponent<CardVisual>().PowerToughnessText.color = Color.red;
+			open = "<color=\"red\">";
+			close = "<color=\"red\">";
 		}
-		else
-		{
-			Card.GetComponent<CardVisual>().PowerToughnessText.color = Color.black;
-		}
+
+		Card.GetComponent<CardVisual>().PowerToughnessText.text = Power + "/" + open + (Toughness - DamageOnUnit) + close;
 	}
 
 	public override void ActivateDesignElements(CardVisual cv)

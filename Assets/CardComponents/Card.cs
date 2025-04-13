@@ -35,8 +35,7 @@ public class Card : Slot, ITurnResettable
     public float DisplayHeightTarget;
     public Color NormalCardColor;
     public Color TraceCardColor;
-
-    
+    public Color IntentCardColor;
 
     private Zone m_currZone;
 	public Zone CurrentZone {
@@ -121,6 +120,20 @@ public class Card : Slot, ITurnResettable
         }
     }
     public bool TraceMode { get; set; }
+    public bool IntentMode
+    {
+        get
+        {
+            if (m_dealer == null || !(m_dealer.GameMode is BattleGameMode))
+            {
+                return false;
+            }
+            else
+            {
+                return m_dealer.Battle.EnemyIntentRow.Subzones.Contains(this.CurrentZone);
+            }
+        }
+    }
     public bool IsInPlay
     {
         get
@@ -136,7 +149,8 @@ public class Card : Slot, ITurnResettable
     {
         get
         {
-            if (m_dealer.Battle.EnemyRow.Subzones.Contains(CurrentZone))
+            if (m_dealer.Battle.EnemyRow.Subzones.Contains(CurrentZone) 
+                || m_dealer.Battle.EnemyIntentRow.Subzones.Contains(CurrentZone))
             {
                 return CharacterType.Enemy;
             }
@@ -156,7 +170,8 @@ public class Card : Slot, ITurnResettable
 	{
 		get
 		{
-			return !IsFace;
+            //return !IsFace;
+            return true;
 		}
 	}
     public bool IsFace
@@ -338,7 +353,7 @@ public class Card : Slot, ITurnResettable
 		if (m_dealer.DealerIsActive) return;
 		if ((!CanBePlayedAsCard) && (!CanBePlayedAsTrace)) return;
 
-		Zone zone = FindAnyObjectByType<ZoneManager>().ZoneHoveredOver();
+		Zone zone = FindAnyObjectByType<ZoneManager>().CurrentZoneHoveredOver();
         Debug.Log("Drop on zone " + zone.ZoneName);
 
         if (zone.CanAcceptAsTrace(this))

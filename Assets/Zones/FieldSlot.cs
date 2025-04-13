@@ -231,21 +231,26 @@ public class FieldSlot : Slot, ITurnResettable
 		m_club = 0;
 		m_diamond = 0;
 
+
 		foreach (Card card in TraceZone.Cards)
 		{
+			int cardPips = card.Rank;
+			if (card.Rank >= 11)
+				cardPips = 1;
+
 			switch (card.Suit)
 			{
 				case Suit.SPADES:
-					m_spade += card.Rank;
+					m_spade += cardPips;
 					break;
 				case Suit.HEARTS:
-					m_heart += card.Rank;
+					m_heart += cardPips;
 					break;
 				case Suit.CLUBS:
-					m_club += card.Rank;
+					m_club += cardPips;
 					break;
 				case Suit.DIAMONDS:
-					m_diamond += card.Rank;
+					m_diamond += cardPips;
 					break;
 			}
 		}

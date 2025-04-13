@@ -53,6 +53,7 @@ public class PlayerDeclareAttackState: GameModeState
 
 		List<Button>  buttons = new List<Button>();
 		List<ZoneBorder> borders = new List<ZoneBorder>();
+		DealerSpeak dealerSpeak = DealerSpeak.SceneInstance;
 
 		bool validAttackerExists = false;
 		foreach (UnitTypeComponent unit in units)
@@ -61,7 +62,7 @@ public class PlayerDeclareAttackState: GameModeState
 			if (!unit.CanAttack())
 			{
 				if (unit.Card.EnteredThisTurn)
-					m_gameMode.SetDialogueReadout("You control no units that can currently attack.");
+					dealerSpeak.SetDialogue("You control no units that can currently attack.");
 			}
 			else
 			{
@@ -91,7 +92,7 @@ public class PlayerDeclareAttackState: GameModeState
 		m_selectorBorders = borders;
 
 		if (validAttackerExists)
-			m_gameMode.SetDialogueReadout("Your units will attack if able, but you may order them to hold off.");
+			dealerSpeak.SetDialogue("Your units will attack if able, but you may order them to hold off.");
 	}
 
 	override public void UpdateState()

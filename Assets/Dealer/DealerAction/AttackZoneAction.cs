@@ -33,7 +33,7 @@ public class AttackZoneAction : DealerAction
 		// End if attack is invalid
 		if (!m_unit.CanAttackZone(m_tgt))
 		{
-			Debug.Log("Cannot attack with " + m_unit.Card.Rank.ToString() + " of " + m_unit.Card.Suit.ToString());
+			//Debug.Log("Cannot attack with " + m_unit.Card.Rank.ToString() + " of " + m_unit.Card.Suit.ToString());
 			m_unit.DeclaredAsAttacker = false;
 			Complete = true;
 			return;
@@ -42,6 +42,24 @@ public class AttackZoneAction : DealerAction
 		m_tgt.ResolveDamage(m_unit.Power, m_unit);
 		m_unit.transform.SetAsLastSibling();
 		m_unit.Card.PlayAnimation(m_animname);
+
+
+		DealerSpeak dealerSpeak = DealerSpeak.SceneInstance;
+		if (m_tgt.Cards.Length > 0 && m_tgt.Cards[0].IsCardType(CardType.UNIT))
+		{
+			dealerSpeak.SetDialogue(
+				m_unit.Card.CardName + " attacks " 
+				+ m_tgt.Cards[0].CardName
+				+ " for " + m_unit.Power + " damage.");
+		}
+		else
+		{
+			dealerSpeak.SetDialogue(
+				m_unit.Card.CardName 
+				+ " attacks directly for " 
+				+ m_unit.Power + " damage.");
+		}
+
 	}
 
 	override protected void ProcessAction()
@@ -49,6 +67,7 @@ public class AttackZoneAction : DealerAction
 		Complete = m_unit.Card.AnimationComplete(m_animname);
 		if (Complete)
 		{
+			//m_tgt.ResolveDamage(m_unit.Power, m_unit);
 			IStateBasedEvent.TestAll();
 			m_unit.DeclaredAsAttacker = false;
 		}

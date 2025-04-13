@@ -48,9 +48,8 @@ public class BattleGameMode : GameMode
 		dealer.GenerateDefaultDeck(PlayerDeck, Suit.SPADES, PlayerRef);
 		PlayerDeck.Shuffle();
 
-		//StartNextTurn();
-		SwapState(new PlayerStartTurnState());
-		//SwapState(new PlayerNeutralState());
+		SwapState(new EnemySummonState());
+		//SwapState(new PlayerStartTurnState());
 	}
 
 	override public void UpdateGameMode()
@@ -93,6 +92,11 @@ public class BattleGameMode : GameMode
 	private void SetZoneOwners()
 	{
 		foreach (Zone zone in EnemyRow.Subzones)
+		{
+			zone.ZoneOwner = EnemyRef;
+		}
+
+		foreach (Zone zone in EnemyIntentRow.Subzones)
 		{
 			zone.ZoneOwner = EnemyRef;
 		}

@@ -277,6 +277,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: KeywordSymbol_8
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fea229bcfafa0be4c8f31f36f976b0ba
+      internalID: 113281359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -296,6 +317,7 @@ TextureImporter:
       KeywordSymbol_5: 961748831
       KeywordSymbol_6: 1107934069
       KeywordSymbol_7: -103637096
+      KeywordSymbol_8: 113281359
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

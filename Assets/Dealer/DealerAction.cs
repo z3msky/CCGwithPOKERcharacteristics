@@ -40,6 +40,7 @@ public class DealerAction
 
 	public void Setup(Dealer dealer)
 	{
+		//DealerSpeak.SceneInstance.ClearDialogue();
 		m_dealer = dealer;
 		Timer = 0;
 		SetupAction();

@@ -12,7 +12,7 @@ public class PlayerStartTurnState : GameModeState
 		m_battle = m_gameMode as BattleGameMode;
 		Debug.Assert(m_battle != null);
 
-		m_gameMode.SetDialogueReadout("Draw your cards");
+		DealerSpeak.SceneInstance.SetDialogue("Draw your cards");
 		m_battle.TryDrawUpTo(5);
 
 		foreach (ITurnResettable resettable in GameObject.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ITurnResettable>())

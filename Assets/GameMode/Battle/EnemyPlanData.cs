@@ -28,6 +28,7 @@ public class EnemyMove
 [CreateAssetMenu(fileName = "New Enemy Play Data", menuName = "Create Enemy Play Data", order = 1)]
 public class EnemyPlanData : ScriptableObject
 {
+	public string EnemyName;
 	public EnemyMove[] Moves;
 }
 
@@ -35,7 +36,7 @@ public class RuntimeEnemyPlan
 {
 	public EnemyMove[] Moves;
 
-	public RuntimeEnemyPlan(EnemyPlanData data)
+	public RuntimeEnemyPlan(EnemyPlanData data, string name = "Your foe")
 	{
 		Moves = new EnemyMove[data.Moves.Length];
 		for (int i = 0; i < Moves.Length; i++)

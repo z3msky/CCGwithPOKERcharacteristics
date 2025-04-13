@@ -39,20 +39,24 @@ public class EnemySummonState : GameModeState
 				validSlots.Add(z as FieldSlot);
 		}
 
+		List<string> playedCardNames = new List<string>();
 		foreach (EnemyMove move in movesThisTurn)
 		{
 			if (move.CardDataAsset.CardTypes.Contains(CardType.UNIT) && validSlots.Count > 0)
 			{
 				int slotIndex = Random.Range(0, validSlots.Count - 1);
 
-
 				FieldSlot target = validSlots[slotIndex] as FieldSlot;
 				Card card = m_battle.dealer.GenerateCard(move.CardDataAsset, m_battle.EnemyGenerateSlot);
 				target.PlayCardAsSummon(card, true);
 				move.Complete = true;
+				playedCardNames.Add(card.CardName);
 				validSlots.Remove(target);
 			}
 		}
+
+		string verbS = playedCardNames.Count > 1 ? "" : "s";
+		DealerSpeak.SceneInstance.SetDialogue(ZTMPHelper.ListItems(playedCardNames) + " become"+ verbS + " impending");
 
 		m_battle.SwapState(new EnemyAdvanceState());
 	}
