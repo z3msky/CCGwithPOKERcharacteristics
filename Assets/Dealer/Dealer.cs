@@ -92,10 +92,6 @@ public class Dealer : MonoBehaviour
 		if (CurrentAction.Complete)
         {
             m_queue.Remove(CurrentAction);
-            if (m_queue.Count == 0)
-            {
-                OnQueueCompleted();
-            }
         }
     }
 
@@ -135,12 +131,6 @@ public class Dealer : MonoBehaviour
         }
 
     }
-
-	// Dealer gets to update until queue is done
-	// here we hand authority back to the game mode state machine
-	void OnQueueCompleted()
-	{
-	}
 
 	public void LerpMoveCardToZone(Card card, Zone dest)
     {
